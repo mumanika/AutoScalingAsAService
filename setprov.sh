@@ -2,8 +2,11 @@
 
 #set up the provider namespace
 
-provider_ip=172.16.12.12/24
-provider_nei_ip=172.16.12.13/24
+#$1 is provider ip and $2 is neighbout ip /24format
+
+provider_ip=$1
+provider_nei_ip=$2
+
 ip netns del Provider
 ip netns add Provider
 ip link set ens4 netns Provider
