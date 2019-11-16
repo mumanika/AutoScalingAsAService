@@ -8,4 +8,4 @@ then
 	exit
 fi
 
-echo $1,$2,$3 >> /etc/${4}/${5}.hostsfile
+echo $1,$2,$3 >> /etc/netns/${4}/${5}.hostsfile

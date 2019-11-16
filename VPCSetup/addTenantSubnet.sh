@@ -17,4 +17,4 @@ ip netns exec $1 brctl addif ${1}'_br'${2}NS
 ip netns exec $1 ip link set ${1}'_br'${2}NS up
 ip netns exec $1 ip addr add $ip'.1/'$4 dev NS${1}'_br'${2}
 ip netns exec $1 ip link set NS${1}'_br'${2} up
-dnsmasq --except-interface=lo --interface=NS${1}'_br'${2} --dhcp-range=$5,$6 --bind-interfaces --dhcp-authoritative --dhcp-hostsfile=/etc/${1}/${7}.hostsfile
+dnsmasq --except-interface=lo --interface=NS${1}'_br'${2} --dhcp-range=$5,$6 --bind-interfaces --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile
