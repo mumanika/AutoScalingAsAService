@@ -2,7 +2,7 @@
 
 #set up the provider namespace
 
-#$1 is provider ip and $2 is neighbout ip /24format
+#$1 is provider ip
 
 ip netns del Provider
 ip netns add Provider

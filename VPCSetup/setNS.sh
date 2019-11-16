@@ -9,8 +9,8 @@ then
 fi
 
 ip=$(echo $2 | cut -d '.' -f 1-3)
-src=$ip
-dst=$(echo $4 | cut -d '.' -f 1-3)
+src=$(echo $2 | cut -d '.' -f 1-3)
+dst=$(echo $3 | cut -d '.' -f 1-3)
 
 
 ip netns del $1
@@ -23,11 +23,11 @@ ip netns exec $1 ip link set ${1}Prov up
 ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
-
+#echo $src
 ip netns exec Provider iptables -t filter -I FORWARD 1 -i vProv -o Prov$1 -j ACCEPT
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o vProv -i Prov$1 -j ACCEPT
-ip netns exec Provider iptables -t filter -I FORWARD 1 -s $src'.0/24' -d $dst'.0/24' -j ACCEPT
-ip netns exec Provider iptables -t filter -I FORWARD 1 -d $src'.0/24' -s $dst'.0/24' -j ACCEPT
+ip netns exec Provider iptables -t filter -I FORWARD 1 -s "${src}".0/24 -d "${dst}".0/24 -j ACCEPT
+ip netns exec Provider iptables -t filter -I FORWARD 1 -d "${src}.0/24" -s "${dst}.0/24" -j ACCEPT
 
 
 mkdir /etc/netns/
