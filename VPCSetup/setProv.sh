@@ -17,3 +17,4 @@ ip link set vProv netns Provider
 ip netns exec Provider ip link set vProv up
 ip netns exec Provider dhclient vProv 
 ip netns exec Provider iptables -t filter -I FORWARD 1 -j DROP
+ip netns exec Provider iptables -t nat -A POSTROUTING -o vProv -j MASQUERADE
