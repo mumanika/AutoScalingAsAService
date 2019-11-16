@@ -23,6 +23,7 @@ ip netns exec $1 ip link set ${1}Prov up
 ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
+ip netns exec $1 ip link set lo up
 #echo $src
 ip netns exec Provider iptables -t filter -I FORWARD 1 -i vProv -o Prov$1 -j ACCEPT
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o vProv -i Prov$1 -j ACCEPT
