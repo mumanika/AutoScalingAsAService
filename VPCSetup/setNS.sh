@@ -21,4 +21,5 @@ ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
 mkdir /etc/netns/
+rm -rf /etc/netns/${1}/
 mkdir /etc/netns/${1}/
