@@ -9,4 +9,6 @@ then
 fi
 
 ip netns delete $1
+rm -rf /etc/netns/$1/*
+#rmdir /etc/netns/$1
 ip netns exec Provider ip route delete $2
