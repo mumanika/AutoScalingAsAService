@@ -1,14 +1,17 @@
 #!/bin/bash
 
-# Desc: This script creates a new tenant namespace and connects it to the Provider. The default route is also given through the Provider.
-# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider)
+# Desc: This script creates a new tenant namespace and connects it to the Provider. The default route is also given through the Provider. teh script also sets up the iptable rules for L3 isolation.
+# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider), present site source address with mask, destination site address with mask.  
 
-if [ $# -ne 2 ];
+if [ $# -ne 4 ];
 then
 	exit
 fi
 
 ip=$(echo $2 | cut -d '.' -f 1-3)
+src=$(echo $3 | cut -d '.' -f 1-3)
+dst=$(echo $4 | cut -d '.' -f 1-3)
+
 
 ip netns del $1
 ip netns add $1
@@ -23,8 +26,9 @@ ip netns exec $1 ip route add default via $ip'.1'
 
 ip netns exec Provider iptables -t filter -I FORWARD 1 -i vProv -o Prov$1 -j ACCEPT
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o vProv -i Prov$1 -j ACCEPT
-ip netns exec Provider iptables -t filter -I FORWARD 1 -i ens4 -o Prov$1 -j ACCEPT
-ip netns exec Provider iptables -t filter -I FORWARD 1 -o ens4 -i Prov$1 -j ACCEPT
+ip netns exec Provider iptables -t filter -I FORWARD 1 -s $src'.0/24' -d $dst'.0/24' -j ACCEPT
+ip netns exec Provider iptables -t filter -I FORWARD 1 -d $src'.0/24' -s $dst'.0/24' -j ACCEPT
+
 
 mkdir /etc/netns/
 rm -rf /etc/netns/${1}/
