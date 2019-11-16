@@ -11,4 +11,8 @@ fi
 ip netns delete $1
 rm -rf /etc/netns/$1/*
 #rmdir /etc/netns/$1
+ip netns exec Provider iptables -t filter -D -i vProv -o Prov$1 -j ACCEPT
+ip netns exec Provider iptables -t filter -D -o vProv -i Prov$1 -j ACCEPT
+ip netns exec Provider iptables -t filter -D -i ens4 -o Prov$1 -j ACCEPT
+ip netns exec Provider iptables -t filter -D -o ens4 -i Prov$1 -j ACCEPT
 ip netns exec Provider ip route delete $2

@@ -16,4 +16,4 @@ brctl addif virbr0 vProv_
 ip link set vProv netns Provider
 ip netns exec Provider ip link set vProv up
 ip netns exec Provider dhclient vProv 
-
+ip netns exec Provider iptables -t filter -I FORWARD 1 -j DROP
