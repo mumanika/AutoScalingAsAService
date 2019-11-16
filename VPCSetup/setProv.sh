@@ -9,4 +9,10 @@ ip netns add Provider
 ip link set ens4 netns Provider
 ip netns exec Provider ip link set ens4 up
 ip addr add $1 dev ens4
-ip route add default via $1
+ip link add vProv type veth peer name vProv_
+ip link set vProv_ up
+brctl addif virbr0 vProv_
+ip link set vProv netns Provider
+ip netns exec Provider ip link set vProv up
+ip netns exec dhclient vProv 
+
