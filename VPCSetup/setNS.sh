@@ -35,3 +35,7 @@ ip netns exec Provider iptables -t filter -I FORWARD 1 -d "${src}.0/24" -s "${ds
 mkdir /etc/netns/
 rm -rf /etc/netns/${1}/
 mkdir /etc/netns/${1}/
+
+echo "no-resolv" >> /etc/netns/${1}/dnsmasq.conf
+echo "server=127.0.0.1" >> /etc/netns/${1}/dnsmasq.conf
+echo "server=8.8.8.8" >> /etc/netns/${1}/dnsmasq.conf
