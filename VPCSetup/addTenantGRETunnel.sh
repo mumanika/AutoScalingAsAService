@@ -8,6 +8,7 @@ then
 	exit
 fi
 
+ip=$(echo $4 | cut -d '.' -f 1-3)
 ip netns exec $1 ip tunnel add $2 mode gre local $3 remote $4
 ip netns exec $1 ip link set dev $2 up
-ip netns exec Provider ip route add $4 via $5
+ip netns exec Provider ip route add ${ip}/24 via $5
