@@ -27,4 +27,5 @@ ip netns exec Provider iptables -t filter -I FORWARD 1 -i ens4 -o Prov$1 -j ACCE
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o ens4 -i Prov$1 -j ACCEPT
 
 mkdir /etc/netns/
+rm -rf /etc/netns/${1}/
 mkdir /etc/netns/${1}/
