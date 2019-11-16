@@ -48,3 +48,4 @@ mkdir /etc/netns/${1}/
 echo "no-resolv" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=127.0.0.1" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=8.8.8.8" >> /etc/netns/${1}/dnsmasq.conf
+echo "nameserver 127.0.0.1" >> /etc/netns/${1}/resolv.conf
