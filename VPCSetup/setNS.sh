@@ -1,7 +1,16 @@
 #!/bin/bash
 
 # Desc: This script creates a new tenant namespace and connects it to the Provider. The default route is also given through the Provider. teh script also sets up the iptable rules for L3 isolation.
-# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask.  
+# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask.
+
+#####Argument format#######
+# Namespace name <str>
+# Egress Interface <ip> without the subnet is fine
+# Destination interface of the tenant namespace <ip> 
+
+# Eg. ./setNS.sh siteA 1.1.1.2 10.10.10.2 
+#####Argument format#######
+
 
 if [ $# -ne 3 ];
 then
