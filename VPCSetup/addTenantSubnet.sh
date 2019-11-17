@@ -10,15 +10,15 @@ fi
 
 ip=$(echo $3 | cut -d '.' -f 1-3)
 
-ip netns exec $1 brctl addbr ${1}'_br'${2}
-ip netns exec $1 ip link set dev ${1}'_br'${2} up
-ip netns exec $1 ip link add ${1}'_br'${2}NS type veth peer name NS${1}'_br'${2}
-ip netns exec $1 brctl addif ${1}'_br'${2} ${1}'_br'${2}NS
-ip netns exec $1 ip link set ${1}'_br'${2}NS up
-ip netns exec $1 ip addr add $ip'.1/'$4 dev NS${1}'_br'${2}
-ip netns exec $1 ip link set NS${1}'_br'${2} up
+ip netns exec $1 brctl addbr ${1}'B'${2}
+ip netns exec $1 ip link set dev ${1}'B'${2} up
+ip netns exec $1 ip link add ${1}'B'${2}NS type veth peer name NS${1}'B'${2}
+ip netns exec $1 brctl addif ${1}'B'${2} ${1}'B'${2}NS
+ip netns exec $1 ip link set ${1}'B'${2}NS up
+ip netns exec $1 ip addr add $ip'.1/'$4 dev NS${1}'B'${2}
+ip netns exec $1 ip link set NS${1}'B'${2} up
 ip netns exec $1 rm -f /etc/${7}.hostsfile
 ip netns exec $1 rm -f /etc/netns/${1}/${7}.hostsfile
 ip netns exec $1 touch /etc/${7}.hostsfile
 ip netns exec $1 touch /etc/netns/${1}/${7}.hostsfile
-ip netns exec $1 dnsmasq --interface=NS${1}'_br'${2} --strict-order --dhcp-range=$5,$6 --bind-dynamic --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile --conf-file=/etc/netns/${1}/dnsmasq.conf
+ip netns exec $1 dnsmasq --interface=NS${1}'B'${2} --strict-order --dhcp-range=$5,$6 --bind-dynamic --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile --conf-file=/etc/netns/${1}/dnsmasq.conf
