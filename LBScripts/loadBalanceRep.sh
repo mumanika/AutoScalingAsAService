@@ -13,11 +13,12 @@ fi
 
 ruleToDel=$(($5-$1+1))
 every=$(($5-1))
-for (i=1;i<$ruleToDel;i++); do
+for (( i=1;i<$ruleToDel;i++ )); do
 	read ev dstip <<< $(ip netns exec $4 iptables -t nat -L PREROUTING $i | awk '{for (I=1;I<=NF;I++) if ($I == "every") {printf "%s %s", $(I+1), $(I+2) };}')
 	IFS=':' read -ra prs <<< "$dstip"
-	ipdst=$(echo "$prs[1]")
-	portdst=$(echo "$prs[2]")	
+	ipdst=$(echo "${prs[1]}")
+	portdst=$(echo "${prs[2]}")
+	#echo $prs[2] 	
 	if [ $5 -ne 0 ];
 	then
 		ip netns exec $4 iptables -t nat -R PREROUTING $i -p tcp -d $2 --dport $3 -m state --state NEW -m statistic --mode nth --every $every --packet 0 -j DNAT --to-destination $ipdst:$portdst
