@@ -21,8 +21,11 @@ ip netns exec Provider ip link set ProvDef up
 ip link set DefProv up
 ip netns exec Provider ip route add $(echo $2 | cut -d '.' -f 1-3).0/24 via ${ip}'.1'
 ip route add $2'/24' via $3
+brctl delif virbr0 vProv_
+ip link del vProv_
 ip link add vProv type veth peer name vProv_
 ip link set vProv_ up
+ip link set dev virbr0 up
 brctl addif virbr0 vProv_
 ip link set vProv netns Provider
 ip netns exec Provider ip link set vProv up
