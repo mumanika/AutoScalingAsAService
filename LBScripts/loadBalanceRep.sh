@@ -28,3 +28,4 @@ for (i=1;i<$ruleToDel;i++); do
 done
 
 ip netns exec $6 iptables -t nat -D PREROUTING $ruleToDel
+ip netns exec $1 iptables -t nat -Z PREROUTING
