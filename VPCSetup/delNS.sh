@@ -8,8 +8,8 @@ then
 	exit
 fi
 
+rm -rf /etc/netns/${1}
 ip netns delete $1
-rm -rf /etc/netns/$1/*
 src=$(echo $3 | cut -d '.' -f 1-3)
 dst=$(echo $4 | cut -d '.' -f 1-3)
 #rmdir /etc/netns/$1
