@@ -9,7 +9,7 @@ then
 	exit
 fi
 
-if [ $1 -eq 0 ];
+if [ $1 -eq 1 ];
 then
 	if [ $5 -ne 0 ];
 	then
