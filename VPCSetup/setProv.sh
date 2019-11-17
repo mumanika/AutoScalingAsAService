@@ -1,15 +1,26 @@
 #!/bin/bash
 
-#set up the provider namespace
+#set up the provider namespace, and the route to the other site's provider namespace on
 
-#$1 is provider ip
+#$1 is provider subnet ip (no mask), $2 is other site's provider subnet IP(no mask), $3 is the other site's hypervisor IP
+
+if [ $# -ne 3 ];
+then
+	exit
+fi
+
+ip=$(echo $1 | cut -d '.' -f 1-3)
 
 ip netns del Provider
 ip netns add Provider
-ip link set ens4 netns Provider
-ip netns exec Provider ip link set ens4 up
-ip netns exec Provider ip addr add $1 dev ens4
-ip netns exec Provider ip route add $(echo $1 | cut -d '.' -f 1-3).0/24 dev ens4
+ip link add ProvDef type veth peer name DefProv
+ip link set ProvDef netns Provider
+ip netns exec Provider ip addr add ${ip}'.2/24' dev ProvDef
+ip addr add ${ip}'.1/24' dev DefProv
+ip netns exec Provider ip link set ProvDef up
+ip link set DefProv up
+ip netns exec Provider ip route add $(echo $1 | cut -d '.' -f 1-3).0/24 via ${ip}'.1/24'
+ip route add $2'/24' via $3
 ip link add vProv type veth peer name vProv_
 ip link set vProv_ up
 brctl addif virbr0 vProv_
