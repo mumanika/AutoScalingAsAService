@@ -1,0 +1,28 @@
+- hosts: localhost
+  become: yes
+  become_user: root
+  gather_facts: no
+
+
+  tasks:
+
+  #VM Image Creation with iperf3 and wireshark
+  #- name: Create an image
+  #   command: virt-builder centos-7.5 --format qcow2 --size 20G -o /var/lib/libvirt/images/'{{vm_name}}'.qcow2 --root-password password:EcE792net! --install iperf3,wireshark,qemu-guest-agent --selinux-relabel --firstboot-command 'dhclient'
+  #   become: yes
+  #   become_user: root
+
+
+
+
+    - name: Create an XML File for VM
+      command: python modify_xml.py vm_t {{vm_name}}
+      become: yes
+
+    - name: Define a VM
+      virt:
+        name: '{{ vm_name }}'
+        command: define
+        xml: "{{ lookup('template', '/etc/libvirt/qemu/{{ vm_name }}.xml') }}"
+        uri: 'qemu:///system'
+
