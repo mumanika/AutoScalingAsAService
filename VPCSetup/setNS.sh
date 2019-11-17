@@ -33,7 +33,7 @@ ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
 ip netns exec $1 ip link set lo up
-ip netns exec $1 iiptables -t nat -A POSTROUTING -o ${1}Prov -j MASQUERADE
+ip netns exec $1 iptables -t nat -A POSTROUTING -o ${1}Prov -j MASQUERADE
 #echo $src
 ip netns exec Provider iptables -t filter -I FORWARD 1 -i vProv -o Prov$1 -j ACCEPT
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o vProv -i Prov$1 -j ACCEPT
@@ -48,3 +48,4 @@ mkdir /etc/netns/${1}/
 echo "no-resolv" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=127.0.0.1" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=8.8.8.8" >> /etc/netns/${1}/dnsmasq.conf
+echo "nameserver 127.0.0.1" >> /etc/netns/${1}/resolv.conf
