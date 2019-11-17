@@ -8,4 +8,4 @@ then
 	exit
 fi
 
-virsh attach-interface --domain $1 --type direct --source ${1}${2} --live --config --model virtio 
+virsh attach-interface --domain $1 --type direct --source ${1}${2} --config --model virtio 
