@@ -2,9 +2,9 @@
 
 #set up the provider namespace, and the route to the other site's provider namespace on
 
-#$1 is provider subnet ip (no mask), $2 is other site's provider subnet IP(no mask), $3 is the other site's hypervisor IP
+#$1 is provider subnet ip (no mask), $2 is other site's provider subnet IP(no mask), $3 is the other site's hypervisor IP, $4 is the IP address for SSH to the other node
 
-if [ $# -ne 3 ];
+if [ $# -ne 4 ];
 then
 	exit
 fi
@@ -32,3 +32,4 @@ ip netns exec Provider ip link set vProv up
 ip netns exec Provider dhclient vProv 
 ip netns exec Provider iptables -t filter -I FORWARD 1 -j DROP
 ip netns exec Provider iptables -t nat -A POSTROUTING -o vProv -j MASQUERADE
+ip route add $4'/32' via $3
