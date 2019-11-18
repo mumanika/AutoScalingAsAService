@@ -21,4 +21,4 @@ ip netns exec $1 rm -f /etc/${7}.hostsfile
 ip netns exec $1 rm -f /etc/netns/${1}/${7}.hostsfile
 ip netns exec $1 touch /etc/${7}.hostsfile
 ip netns exec $1 touch /etc/netns/${1}/${7}.hostsfile
-ip netns exec $1 dnsmasq --interface=NS${1}'B'${2} --strict-order --dhcp-range=$5,$6 --bind-dynamic --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile --conf-file=/etc/netns/${1}/dnsmasq.conf
+ip netns exec $1 dnsmasq --interface=NS${1}'B'${2} --strict-order --dhcp-range=$5,$6 --bind-dynamic --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile --conf-file=/etc/netns/${1}/dnsmasq.conf --dhcp-lease-max=253
