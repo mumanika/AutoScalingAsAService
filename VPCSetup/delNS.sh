@@ -9,6 +9,8 @@ then
 fi
 
 rm -rf /etc/netns/${1}
+ip netns exec ${1} ip link set dev ${1}Prov down
+ip netns exec ${1} ip link del dev ${1}Prov 
 ip netns delete $1
 src=$(echo $2 | cut -d '.' -f 1-3)
 dst=$(echo $3 | cut -d '.' -f 1-3)
