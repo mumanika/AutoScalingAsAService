@@ -12,7 +12,7 @@ ip netns exec $1 ip link set dev ${2} down
 ip netns exec $1 ip link set dev NS${2} down
 ip netns exec $1 ip link set dev ${2}NS down
 
-a=($(brctl show $2 | awk 'NR==2, NR==$NR { print $NF }'))
+a=($(ip netns exec $1 brctl show $2 | awk 'NR==2, NR==$NR { print $NF }'))
 
 for i in "${a[@]}"
 do
