@@ -1,0 +1,44 @@
+- hosts: hosts
+  #become: yes
+  #become_user: root
+  gather_facts : no
+
+  vars:
+    json_file: "{{ lookup('file',inp_file) | from_json }}"
+    file_name: "{{ inp_file }}"
+
+  tasks:
+    - name: Create NS in site1
+      command: "./setNS.sh {{ json_file.ns_name }} {{ json_file.setNS1.local_ps }} {{ json_file.setNS1.remote_ps }}"
+      when: inventory_hostname == 'localhost'
+
+    - name: Create NS in site2
+      command: "/home/ece792/Project2/setNS.sh {{ json_file.ns_name }} {{ json_file.setNS2.local_ps }} {{ json_file.setNS2.remote_ps }}"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create GRE in site1
+      command: "./addTenantGRETunnel.sh {{ json_file.ns_name }} {{ json_file.gre_name }} {{ json_file.addGre1.local_ip }} {{ json_file.addGre1.remote_ip }} {{ json_file.addGre1.n_hop }} {{ json_file.addGre1.next_hop }}"
+      when: inventory_hostname == 'localhost'
+
+    - name: Create GRE in site2
+      command: "/home/ece792/Project2/addTenantGRETunnel.sh {{ json_file.ns_name }} {{ json_file.gre_name }} {{ json_file.addGre2.local_ip }} {{ json_file.addGre2.remote_ip }} {{ json_file.addGre2.n_hop }} {{ json_file.addGre2.next_hop }}"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create Subnets in site1
+      command: "python createSubnets.py {{ file_name }} 0 "
+      when: inventory_hostname == 'localhost'
+
+    - name: Create subnets in site2
+      command: "python /home/ece792/Project2/createSubnets.py /home/ece792/Project2/{{ file_name }} 1"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create VM's
+      command: "python create_vm.py {{ file_name }}"
+      when: inventory_hostname == 'localhost'
+
+
+
+

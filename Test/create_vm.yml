@@ -16,7 +16,7 @@
 
 
     - name: Create an XML File for VM
-      command: python modify_xml.py vm_t {{vm_name}}
+      command: python modify_xml.py NS1v3 {{vm_name}}
       become: yes
 
     - name: Define a VM
@@ -25,4 +25,10 @@
         command: define
         xml: "{{ lookup('template', '/etc/libvirt/qemu/{{ vm_name }}.xml') }}"
         uri: 'qemu:///system'
+
+        #- name: Start VM
+    # virt:
+    #name: '{{ vm_name }}'
+    #command: create
+    # become: yes
 

@@ -5,44 +5,46 @@
             {
                 "vm_list": [
                     {
-                        "ip": "5.5.5.2", 
-                        "name": "NS1S1Vm1"
+                        "ip": "5.5.5.51", 
+                        "name": "NS1v1"
                     }
                 ], 
-                "bridge": "NS1_br1", 
-                "scale_up_flag": "0", 
-                "host": "host1", 
+                "bridge": "NS1B1", 
                 "subnet_id": 1, 
-                "mem_threshold": "44", 
+                "mem_threshold": "45", 
                 "subnet_address": "5.5.5.0", 
                 "prefix": "24", 
+                "scale_up_flag": "0", 
+                "host": "host1", 
                 "cpu_threshold": "0.23", 
+                "subnet_name": "T1S1", 
                 "vm_num": "1", 
                 "ns_ip": "5.5.5.1"
             }, 
             {
                 "vm_list": [], 
+                "bridge": "NS1B1", 
+                "subnet_id": 1, 
+                "mem_threshold": "45", 
+                "subnet_address": "5.5.6.0", 
+                "prefix": "24", 
                 "host": "host2", 
                 "cpu_threshold": "0.23", 
-                "mem_threshold": "44", 
-                "bridge": "NS1_br1", 
-                "subnet_id": 1, 
+                "subnet_name": "T1S1", 
                 "vm_num": 0, 
-                "ns_ip": "5.5.6.1", 
-                "subnet_address": "5.5.6.0", 
-                "prefix": "24"
+                "ns_ip": "5.5.6.1"
             }
         ]
     ], 
     "ns_name": "NS1", 
     "ns_ps subnet": [
         {
-            "ns_ps_subnet": "3.3.3.0", 
+            "ns_ps_subnet": "3.3.1.0", 
             "host": "host1", 
             "ns_ps_prefix": 24
         }, 
         {
-            "ns_ps_subnet": "3.3.4.0", 
+            "ns_ps_subnet": "3.3.2.0", 
             "host": "host2", 
             "ns_ps_prefix": 24
         }

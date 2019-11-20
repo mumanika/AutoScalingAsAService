@@ -1,0 +1,42 @@
+{
+    "subnet_list2": [
+        {
+            "subnet": "5.5.6.0", 
+            "prefix": "24", 
+            "name": "T1S1", 
+            "id": 0
+        }
+    ], 
+    "subnet_list1": [
+        {
+            "subnet": "5.5.5.0", 
+            "prefix": "24", 
+            "name": "T1S1", 
+            "id": 0
+        }
+    ], 
+    "json": "T1.json", 
+    "gre_name": "NS1_gre", 
+    "subnet_count": 1, 
+    "addGre2": {
+        "n_hop": "100.100.100.1", 
+        "remote_ip": "3.3.1.2", 
+        "next_hop": "172.16.12.13", 
+        "local_ip": "3.3.2.2"
+    }, 
+    "ns_name": "NS1", 
+    "addGre1": {
+        "n_hop": "99.99.99.1", 
+        "remote_ip": "3.3.2.2", 
+        "next_hop": "172.16.12.12", 
+        "local_ip": "3.3.1.2"
+    }, 
+    "setNS1": {
+        "remote_ps": "3.3.2.0", 
+        "local_ps": "3.3.1.0"
+    }, 
+    "setNS2": {
+        "remote_ps": "3.3.1.0", 
+        "local_ps": "3.3.2.0"
+    }
+}

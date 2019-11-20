@@ -58,15 +58,14 @@ if __name__ == "__main__":
     #with open(json_file) as f:
      #   schema = json.load(f)
 
-    for item in schema["guests"]:
-        tree =ET.parse(ref_vm)
-        domain = tree.getroot()
-        xml_file = xml_creation()
-        xml_file.copy_(vm_name)
-        xml_file.name(domain,vm_name)
-        xml_file.remove_uuid(domain)
-        xml_file.change(domain,vm_name)
-        xml_file.remove_interface(domain)
+    tree =ET.parse(ref_vm+".xml")
+    domain = tree.getroot()
+    xml_file = xml_creation()
+    xml_file.copy_(vm_name)
+    xml_file.name(domain,vm_name)
+    xml_file.remove_uuid(domain)
+    xml_file.change(domain,vm_name)
+    xml_file.remove_interface(domain)
         #xml_file.set_vcpu(domain,item["vcpu"])
         #xml_file.set_ram(domain,item["ram"])
         #xml_file.set_disk(domain,item["memory"])
@@ -76,7 +75,7 @@ if __name__ == "__main__":
             #for k in item["interface"]:
                 #xml_file.set_network(domain,k)
 
-        tree.write('/etc/libvirt/qemu/'+vm_name+'.xml')
+    tree.write('/etc/libvirt/qemu/'+vm_name+'.xml')
 
 
 
