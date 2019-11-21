@@ -15,3 +15,7 @@ then
 else
 	ip netns exec $6 iptables -t nat -I PREROUTING 1 -p tcp -d $2 --dport $3 -m state --state NEW -m statistic --mode nth --every $1 --packet 0 -j DNAT --to-destination $4
 fi
+
+ip=$(echo $4 | cut -d '.' -f 1-3)
+
+ip netns exec $6 iptables -t nat -I POSTROUTING 1 -p tcp -d $ip.0/24 -j SNAT --to-source $2
