@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Desc: Add iptable rules for load balancing. Add the entry for only new connections.
-# Args: Every nth packet, Public Destination IP address, Public IP destination port, Private destination IP, Private destination port, namespace name
+# Desc: Add iptable rules for load balancing. Add the entry for only new connections. Only run this on the control node's site because that is where the load balancer is.
+# Args: Every nth packet, IP address assigned to loopback, Public IP destination port, Private destination IP of the guest VM, Private destination port, namespace name
 
 if [ $# -ne 6 ];
 then

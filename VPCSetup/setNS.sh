@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Desc: This script creates a new tenant namespace and connects it to the Provider. The default route is also given through the Provider. teh script also sets up the iptable rules for L3 isolation.
-# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask.
+# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask, 1 or 0 indictaing whether to add address to the loopback, address to add to the loopback interface(with mask).
 
 #####Argument format#######
 # Namespace name <str>
@@ -12,7 +12,7 @@
 #####Argument format#######
 
 
-if [ $# -ne 3 ];
+if [ $# -lt 3 ];
 then
 	exit
 fi
@@ -32,6 +32,14 @@ ip netns exec $1 ip link set ${1}Prov up
 ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
+if [ $# -gt 3];
+then
+	if [ $# -ne 4];
+	then
+		exit
+	fi	
+	ip netns exec $1 ip addr add $4 dev lo
+fi
 ip netns exec $1 ip link set lo up
 ip netns exec $1 iptables -t nat -A POSTROUTING -o ${1}Prov -j MASQUERADE
 #echo $src
