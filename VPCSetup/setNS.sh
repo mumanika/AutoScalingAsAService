@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Desc: This script creates a new tenant namespace and connects it to the Provider. The default route is also given through the Provider. teh script also sets up the iptable rules for L3 isolation.
-# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask, 1 or 0 indictaing whether to add address to the loopback, address to add to the loopback interface(with mask).
+# Arguments: namspace name, Egress interface subnet (.2 is given to namespace and .1 is given to the provider),destination site address with mask, address to add to the loopback interface(with mask).
 
 #####Argument format#######
 # Namespace name <str>
