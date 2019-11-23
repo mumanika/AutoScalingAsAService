@@ -1,0 +1,7 @@
+<network>
+  <name>mgmtnet</name>
+  <forward mode='bridge'>
+  </forward>
+  <bridge name='mgmtbr'/>
+</network>
+
