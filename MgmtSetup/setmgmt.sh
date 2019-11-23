@@ -38,6 +38,6 @@ brctl addif mgmtbr vxlan1
 ip2=$(echo $2 | cut -d '.' -f 1-3)
 #ip route add $ip2.0/24 via $3 
 
-dnsmasq --interface=NS${1}'B'${2} --strict-order --dhcp-range=$ip.3,$ip.254 --bind-dynamic --dhcp-authoritative  --conf-file=/etc/mgmtDir/dnsmasq.conf --dhcp-lease-max=253
+dnsmasq --interface=hostmgmtbr --strict-order --dhcp-range=$ip.3,$ip.254 --bind-dynamic --dhcp-authoritative  --conf-file=/etc/mgmtDir/dnsmasq.conf --dhcp-lease-max=253
 
 #dnsmasq --interface=NS${1}'B'${2} --strict-order --dhcp-range=$5,$6 --bind-dynamic --dhcp-authoritative --dhcp-hostsfile=/etc/netns/${1}/${7}.hostsfile --conf-file=/etc/netns/${1}/dnsmasq.conf --dhcp-lease-max=253
