@@ -88,11 +88,8 @@ for temp in range(0,int(subnet_count)):
         vm_ip_list =[]
 
         for i in range(0,int(vm_num)):
-            print("Enter the vm_name:")
-            vm_name = raw_input()
-            vm_name = NS_name+vm_name
+            vm_name = NS_name+"V"+str(i+1)
             vm_name_list.append(vm_name)
-            #vm_ip = get_ip(subnet_address,i+2)
             vm_ip = ' '
             vm_ip_list.append(vm_ip)
         
@@ -107,7 +104,7 @@ for temp in range(0,int(subnet_count)):
         
         vm_list =[]
         for i in range(0,int(vm_num)):
-            vm_list.append({ 'name': vm_name_list[i], 'ip': vm_ip_list[i] } )
+            vm_list.append({ 'name': vm_name_list[i], 'ip': vm_ip_list[i],'id':str(i+1) } )
         
         hosts =[]
 
@@ -123,7 +120,8 @@ for temp in range(0,int(subnet_count)):
             'ns_ip' : NS_ip,
             'cpu_threshold' : cpu_threshold,
             'mem_threshold' : mem_threshold,
-            'scale_up_flag' :'0'
+            'scale_up_flag' :'0',
+            'lo': '70.70.70.70'
             })
        
         host2_subnet_address = update(subnet_address)
@@ -136,12 +134,13 @@ for temp in range(0,int(subnet_count)):
            'subnet_id':temp+1,
            'subnet_address':host2_subnet_address,
            'prefix':prefix,
-           'vm_num':0,
+           'vm_num':vm_num,
            'vm_list': host2_vm_list,
            'bridge':bridge_name,
            'ns_ip':host2_NS_ip,
            'cpu_threshold': cpu_threshold,
            'mem_threshold': mem_threshold,
+           'lo' :'71.71.71.71'
            })
         tenant['subnets'].append(hosts)
                  
@@ -158,8 +157,8 @@ arg_vars={}
 arg_vars['ns_name']= NS_name
 arg_vars['gre_name']=NS_name+"_gre"
 arg_vars['subnet_count']=int(subnet_count)
-arg_vars['setNS1']={'local_ps':ps_host1_subnet,'remote_ps':ps_host2_subnet}
-arg_vars['setNS2']={'local_ps':ps_host2_subnet,'remote_ps':ps_host1_subnet}
+arg_vars['setNS1']={'local_ps':ps_host1_subnet,'remote_ps':ps_host2_subnet,'lo':'70.70.70.70'}
+arg_vars['setNS2']={'local_ps':ps_host2_subnet,'remote_ps':ps_host1_subnet,'lo':'71.71.71.71'}
 
 arg_vars['addGre1']={'local_ip':local_ip,'remote_ip':remote_ip,'n_hop':'99.99.99.1','next_hop':'172.16.12.12'}
 arg_vars['addGre2']={'local_ip':remote_ip,'remote_ip':local_ip,'n_hop':'100.100.100.1','next_hop':'172.16.12.13'}
@@ -182,12 +181,41 @@ with open(arg_file,'w') as ofile:
     json.dump(arg_vars,ofile,indent=4)
 
 subprocess.call(shlex.split('sudo scp'+' ' + arg_file+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
-#subprocess.call(shlex.split('sudo scp'+' ' +'createSubnets.py'+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
+subprocess.call(shlex.split('sudo scp'+' ' +file_name+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
 #subprocess.call(shlex.split('sudo scp'+' ' +'addRouteToSubnet.sh'+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
 
 #call automation
 subprocess.call(shlex.split('sudo'+' '+'ansible-playbook'+' '+'automate.yml'+ ' '+'-i' +' ' +'./inventory'+' '+'--extra-var'+ ' '+'inp_file='+arg_file))
 
+#get ips after and do load balancing
+with open(file_name,'r') as vmf:
+    schema = json.load(vmf)
+
+schema['vm_list_lb']=[]
+for i in range(0,int(subnet_count)):
+    for sub in schema['subnets']:
+        for h in sub:
+            for vms in h['vm_list']:
+                schema['vm_list_lb'].append(vms['ip'])
+
+li = schema['vm_list_lb']
+for n,vm_ip in enumerate(li):
+    subprocess.call(shlex.split('./loadBalanceAdd.sh'+' '+str(n+1)+' '+'70.70.70.70'+' '+get_ip(ps_host1_subnet,2)+' '+'5678'+' ' +vm_ip+' '+'22'+' '+NS_name))
+    #schema['vm_list_lb'].append({h['subnet_name'] : li})
+
+with open(file_name,'w') as ofile1:
+    json.dump(schema,ofile1,indent=4)
+
+subprocess.call(shlex.split('sudo scp'+' ' +file_name+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
+
+#call cron job here for monitoring
+#subprocess.call(shlex.split('sudo python'+' '+'startCron.py'+' '+file_name))
+
+
+
+
+
+    
 
 
 
