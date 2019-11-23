@@ -32,9 +32,9 @@ ip netns exec $1 ip link set ${1}Prov up
 ip netns exec Provider ip addr add $ip'.1/24' dev Prov$1
 ip netns exec Provider ip link set Prov$1 up
 ip netns exec $1 ip route add default via $ip'.1'
-if [ $# -gt 3];
+if [ $# -gt 3 ];
 then
-	if [ $# -ne 4];
+	if [ $# -ne 4 ];
 	then
 		exit
 	fi	
