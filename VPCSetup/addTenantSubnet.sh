@@ -39,6 +39,9 @@ ip netns exec $1 touch /etc/netns/${1}/dnsmasq.conf
 ip netns exec $1 touch /etc/resolv.conf
 ip netns exec $1 touch /etc/netns/${1}/resolv.conf
 
+ip netns exec $1 ip link set lo up
+ip netns exec $1 iptables -t nat -A POSTROUTING -o ${1}Bse -j MASQUERADE
+
 echo "no-resolv" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=127.0.0.1" >> /etc/netns/${1}/dnsmasq.conf
 echo "server=8.8.8.8" >> /etc/netns/${1}/dnsmasq.conf
