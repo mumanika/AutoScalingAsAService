@@ -39,10 +39,18 @@ then
 		exit
 	fi	
 	ip netns exec $1 ip addr add $4 dev lo
-	ip netns exec $1 iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source ${4}
 fi
 ip netns exec $1 ip link set lo up
 ip netns exec $1 iptables -t nat -A POSTROUTING -o ${1}Prov -j MASQUERADE
+if [ $# -gt 3 ];
+then
+	if [ $# -ne 4 ];
+	then
+		exit
+	fi
+	ip netns exec $1 iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source ${4}
+fi
+
 #echo $src
 ip netns exec Provider iptables -t filter -I FORWARD 1 -i vProv -o Prov$1 -j ACCEPT
 ip netns exec Provider iptables -t filter -I FORWARD 1 -o vProv -i Prov$1 -j ACCEPT
