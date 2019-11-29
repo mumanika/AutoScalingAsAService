@@ -8,5 +8,5 @@ then
 	exit
 fi
 
-ip netns exec $4 iptables -N $1  
+ip netns exec $4 iptables -t nat -N $1  
 ip netns exec $4 iptables -t nat -A PREROUTING -p tcp -d $2 --dport $3 -m state --state NEW -j $1
