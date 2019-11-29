@@ -39,6 +39,7 @@ then
 		exit
 	fi	
 	ip netns exec $1 ip addr add $4 dev lo
+	ip netns exec $1 iptables -t nat -A POSTROUTING -p tcp -j SNAT --to-source ${4}
 fi
 ip netns exec $1 ip link set lo up
 ip netns exec $1 iptables -t nat -A POSTROUTING -o ${1}Prov -j MASQUERADE
