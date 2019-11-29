@@ -26,6 +26,7 @@ ip netns exec $1 brctl addif ${1}'B' ${1}'B'NS
 ip netns exec $1 ip link set ${1}'B'NS up
 ip netns exec $1 ip addr add $ip'.1/'$4 dev NS${1}'B'
 ip netns exec $1 ip link set NS${1}'B' up
+ip netns exec $1 ip route add default via ${ip2}'.1'
 
 mkdir /etc/netns/
 rm -rf /etc/netns/${1}/
