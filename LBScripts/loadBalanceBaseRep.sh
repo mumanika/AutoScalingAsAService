@@ -29,4 +29,4 @@ for (( i=1;i<$ruleToDel;i++ )); do
 done
 
 ip netns exec $2 iptables -t nat -D $4 $ruleToDel
-ip netns exec $2iptables -t nat -Z $4
+ip netns exec $2 iptables -t nat -Z $4
