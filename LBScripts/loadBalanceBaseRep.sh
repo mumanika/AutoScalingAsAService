@@ -31,6 +31,8 @@ done
 read ev dstip <<< $(ip netns exec $2 iptables -t nat -L $4 $ruleToDel | awk '{for (I=1;I<=NF;I++) if ($I == "every") {printf "%s %s", $(I+1), $(I+2) };}')
 IFS=':' read -ra prs <<< "$dstip"
 ipdst=$(echo "${prs[1]}")
+ipdst=$(echo ${ipdst} | cut -d '.' -f 1-3)
+ipdst=$(echo ${ipdst}'.0/24')
 
 ip netns exec $2 iptables -t nat -D $4 $ruleToDel
 ip netns exec $2 iptables -t nat -Z $4
