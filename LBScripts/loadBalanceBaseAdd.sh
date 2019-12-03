@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Desc: Add iptable rules for load balancing for the particular LB group on the tenant base namespace. A group is made up of one or more subnet namespaces. (NOTE: make sure to add the route to the loopback interface here at the other site through the GRE tunnel) 
-# Args: Every nth packet, Private subnet IP exposed to base namespace, Private subnet destination port, namespace name, load balancing group name
+# Args: Every nth packet, Private subnet IP exposed to base namespace, Private subnet destination port, namespace name, load balancing group name, loopback address of the base namespace
 
-if [ $# -ne 5 ];
+if [ $# -ne 6 ];
 then
 	echo "Illegal number of params"
 	exit
@@ -16,4 +16,6 @@ else
 	ip netns exec $4 iptables -t nat -I $5 1 -p tcp -m state --state NEW -m statistic --mode nth --every $1 --packet 0 -j DNAT --to-destination $2
 fi
 
+ip=$(echo $2 | cut -d '.' -f 1-3)
 
+ip netns exec $4 iptables -t nat -I POSTROUTING 1 -p tcp -d $ip.0/24 -j SNAT --to-source $6
