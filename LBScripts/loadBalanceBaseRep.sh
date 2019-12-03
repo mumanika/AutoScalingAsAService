@@ -28,5 +28,12 @@ for (( i=1;i<$ruleToDel;i++ )); do
 	every=$(($every-1))
 done
 
+read ev dstip <<< $(ip netns exec $2 iptables -t nat -L $4 $ruleToDel | awk '{for (I=1;I<=NF;I++) if ($I == "every") {printf "%s %s", $(I+1), $(I+2) };}')
+IFS=':' read -ra prs <<< "$dstip"
+ipdst=$(echo "${prs[1]}")
+
 ip netns exec $2 iptables -t nat -D $4 $ruleToDel
 ip netns exec $2 iptables -t nat -Z $4
+
+ruleNo=$(ip netns exec $2 iptables -t nat -L POSTROUTING --line-numbers | awk -v var=${ipdst} '{for (I=1;I<=NF;I++) if ($I == var) {printf "%s\n", $(1) };}')
+ip netns exec $2 iptables -t nat -D POSTROUTING $ruleNo
