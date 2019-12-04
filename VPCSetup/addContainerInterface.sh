@@ -10,4 +10,4 @@ fi
 
 arg=$(echo ${1}'B')
 ip link set dev ${2}${arg} netns ${3}
-ip netns exec ${3} ip link set ${2}${arg} up
+docker container exec --privileged ${2} ip link set dev ${2}${arg} up
