@@ -11,3 +11,4 @@ fi
 arg=$(echo ${1}'B')
 ip link set dev ${2}${arg} netns ${3}
 docker container exec --privileged ${2} ip link set dev ${2}${arg} up
+docker container exec --privileged ${2} dhclient ${2}${arg}
