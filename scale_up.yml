@@ -1,0 +1,16 @@
+- hosts: hosts
+  #become: yes
+  #become_user: root
+  gather_facts : no
+
+  tasks:
+    - name: Create VM in site2
+      command: "python /home/ece792/Project2/scale_up.py {{inp_file}} {{vm_name}} {{ns_name}} {{bridge_name}}"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+      
+
+
+
+
+

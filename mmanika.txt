@@ -1,0 +1,16 @@
+for i in nodes:
+        os.system("sudo docker exec "+i+" sh /root/frr_install.sh")
+        os.system("sudo docker exec "+i+" sh /root/rp_filter.sh")
+        child =pexpect.spawn("sudo docker exec -i -t "+i+" passwd root")
+        child.expect('Enter new UNIX password:')
+        child.sendline('root')
+        child.expect('Retype new UNIX password:')
+        child.sendline('root')
+        child.expect('passwd: password updated successfully')
+        child.expect('\n')
+        os.system("sudo docker exec "+i+" sed -i 's/\#PasswordAuthentication\ yes/PasswordAuthentication\ yes/g' /etc/ssh/sshd_config")
+        os.system("sudo docker exec "+i+" sed -i 's/\#PermitRootLogin\ yes/PermitRootLogin\ yes/g' /etc/ssh/sshd_config")
+        os.system("sudo docker exec "+i+" /etc/init.d/ssh start")
+        time.sleep(5)
+        os.system("sudo docker exec "+i+" /etc/init.d/frr start")
+

@@ -1,0 +1,71 @@
+- hosts: hosts
+  #become: yes
+  #become_user: root
+  gather_facts : no
+
+  vars:
+    json_file: "{{ lookup('file',inp_file) | from_json }}"
+    file_name: "{{ inp_file }}"
+    path_file: /home/ece792/AutoScalingAsAService/
+
+  tasks:
+    - name: Create NS in site1
+      command: "./setNS.sh {{ json_file.ns_name }} {{ json_file.setNS1.local_ps }} {{ json_file.setNS1.remote_ps }} {{json_file.setNS1.lo}}"
+      when: inventory_hostname == 'localhost'
+
+    - name: Create NS in site2
+      command: "{{ path_file}}setNS.sh {{ json_file.ns_name }} {{ json_file.setNS2.local_ps }} {{ json_file.setNS2.remote_ps }} {{json_file.setNS2.lo}}"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create GRE in site1
+      command: "./addTenantGRETunnel.sh {{ json_file.ns_name }} {{ json_file.gre_name }} {{ json_file.addGre1.local_ip }} {{ json_file.addGre1.remote_ip }} {{ json_file.addGre1.n_hop }} {{ json_file.addGre1.next_hop }}"
+      when: inventory_hostname == 'localhost'
+
+    - name: Create GRE in site2
+      command: "{{path_file}}addTenantGRETunnel.sh {{ json_file.ns_name }} {{ json_file.gre_name }} {{ json_file.addGre2.local_ip }} {{ json_file.addGre2.remote_ip }} {{ json_file.addGre2.n_hop }} {{ json_file.addGre2.next_hop }}"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create Subnets in site1
+      command: "python createSubnets.py {{ file_name }} 0 "
+      when: inventory_hostname == 'localhost'
+
+    - name: Create subnets in site2
+      command: "python {{path_file}}createSubnets.py {{path_file}}{{ file_name }} 1"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Create Containers 
+      command: "python create_container.py {{ file_name }}"
+      when: inventory_hostname == 'localhost'
+
+      #- name: Create VM's
+      #command: "python create_vm.py {{ file_name }}"
+      #when: inventory_hostname == 'localhost'
+
+    - name : copy file to site2
+      command: "sudo scp {{ json_file.json }}  ece792@172.16.12.12:{{path_file}}"
+      when: inventory_hostname == 'localhost'
+
+    - name: Add new group chain in site1
+      command: "python loadBalance_group.py {{ json_file.json }} 1"
+      when : inventory_hostname == 'localhost'
+
+    - name: Add new group chain in site2
+      command: "python {{ path_file}}loadBalance_group.py {{path_file}}{{ json_file.json }} 2"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+    - name: Add base group lb in site1
+      command: "python loadBalance_base.py {{ json_file.json }} 1"
+      when: inventory_hostname == 'localhost'
+
+    - name: Add base group lb in site2
+      command: "python {{ path_file }}loadBalance_base.py {{path_file}}{{ json_file.json }} 2"
+      become: true
+      when: inventory_hostname == '172.16.12.12'
+
+
+
+

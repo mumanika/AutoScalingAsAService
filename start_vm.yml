@@ -1,0 +1,13 @@
+- hosts: localhost
+  become: yes
+  become_user: root
+  gather_facts: no
+
+
+  tasks:
+      - name: Start VM
+        virt:
+          name: '{{ vm_name }}'
+          command: create
+        become: yes
+

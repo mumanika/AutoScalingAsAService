@@ -1,0 +1,15 @@
+{
+	"hosts":[
+		{	"host":"host1",
+			"user":"ece792",
+			"mgmt_ip":"172.16.12.13"
+		},
+
+		{	"host":"host2",
+			"user":"ece792",
+			"mgmt_ip":"172.16.12.12"
+		}
+	]
+}
+
+

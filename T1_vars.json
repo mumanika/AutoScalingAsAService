@@ -1,0 +1,60 @@
+{
+    "subnet_list2": [
+        {
+            "subnet": "5.5.6.0", 
+            "prefix": 24, 
+            "base_ns_subnet": "100.0.2.0", 
+            "name": "T1S1", 
+            "id": 0
+        }, 
+        {
+            "subnet": "10.10.11.0", 
+            "prefix": 24, 
+            "base_ns_subnet": "100.0.4.0", 
+            "name": "T1S2", 
+            "id": 1
+        }
+    ], 
+    "subnet_list1": [
+        {
+            "subnet": "5.5.5.0", 
+            "prefix": 24, 
+            "base_ns_subnet": "100.0.1.0", 
+            "name": "T1S1", 
+            "id": 0
+        }, 
+        {
+            "subnet": "10.10.10.0", 
+            "prefix": 24, 
+            "base_ns_subnet": "100.0.3.0", 
+            "name": "T1S2", 
+            "id": 1
+        }
+    ], 
+    "json": "T1.json", 
+    "gre_name": "NS1_gre", 
+    "subnet_count": 2, 
+    "addGre2": {
+        "n_hop": "100.100.100.1", 
+        "remote_ip": "3.3.1.2", 
+        "next_hop": "172.16.12.13", 
+        "local_ip": "3.3.2.2"
+    }, 
+    "ns_name": "NS1", 
+    "addGre1": {
+        "n_hop": "99.99.99.1", 
+        "remote_ip": "3.3.2.2", 
+        "next_hop": "172.16.12.12", 
+        "local_ip": "3.3.1.2"
+    }, 
+    "setNS1": {
+        "lo": "70.70.70.70", 
+        "remote_ps": "3.3.2.0", 
+        "local_ps": "3.3.1.0"
+    }, 
+    "setNS2": {
+        "lo": "71.71.71.71", 
+        "remote_ps": "3.3.1.0", 
+        "local_ps": "3.3.2.0"
+    }
+}

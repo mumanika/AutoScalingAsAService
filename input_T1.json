@@ -1,0 +1,35 @@
+{
+	"subnet_count": 2,
+	"subnets":[
+		{
+			"address":"5.5.5.0",
+			"prefix":24,
+			"container_ct":1
+		},
+
+		{
+			"address":"10.10.10.0",
+			"prefix":24,
+			"container_ct":1
+		}
+	],
+	"scaling_groups":[
+		{
+			"members": [1],
+			"policy": "dynamic",
+			"max_cpu":30,
+			"max_memory":10,
+			"min_cpu":10,
+			"min_container":2
+		},
+		{
+			"members":[2],
+			"policy":"static",
+			"time":"wednesday",
+			"number":2
+		}
+	]
+
+
+}
+
