@@ -21,9 +21,9 @@ ip netns exec $2 ip addr add ${ip2}'.1/24' dev Bse${1}
 ip netns exec $2 ip link set dev Bse${1} up
 ip netns exec $1 brctl addbr ${1}'B'
 ip netns exec $1 ip link set dev ${1}'B' up
-ip netns exec $1 ip link add ${1}'B'NS type veth peer name NS${1}'B'
-ip netns exec $1 brctl addif ${1}'B' ${1}'B'NS
-ip netns exec $1 ip link set ${1}'B'NS up
+ip netns exec $1 ip link add ${1}BNS type veth peer name NS${1}'B'
+ip netns exec $1 ip link set ${1}BNS up
+ip netns exec $1 brctl addif ${1}B ${1}BNS
 ip netns exec $1 ip addr add $ip'.1/'$4 dev NS${1}'B'
 ip netns exec $1 ip link set NS${1}'B' up
 ip netns exec $1 ip route add default via ${ip2}'.1'
