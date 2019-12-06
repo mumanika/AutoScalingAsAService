@@ -10,7 +10,6 @@ fi
 
 arg=$(echo ${1}'B')
 ip link add ${arg}${2} type veth peer name ${2}${arg}
-ip link set ${arg}${2} netns $1
 ip link set ${2}${arg} up
-ip netns exec $1 ip link set ${arg}${2} up
-ip netns exec $1 brctl addif ${arg} ${arg}${2}
+ip link set ${arg}${2} up
+brctl addif ${arg} ${arg}${2}
