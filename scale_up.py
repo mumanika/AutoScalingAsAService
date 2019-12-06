@@ -75,9 +75,10 @@ time.sleep(4)
 pid = subprocess.check_output("sudo docker inspect -f '{{.State.Pid}}' "+vm, shell=True).strip()
 subprocess.call(shlex.split('sudo '+path+'addGuestBridgeInterface.sh '+subnet_name+ ' '+vm))
 subprocess.call(shlex.split('sudo '+path+'addContainerInterface.sh '+subnet_name+' '+vm+' '+pid))
-os.system("sudo docker exec --privileged "+vm+" /etc/init.d/ssh start")
+#os.system("sudo docker exec --privileged "+vm+" /etc/init.d/ssh start")
 
 ip_get = subprocess.check_output("sudo docker container exec --privileged "+vm+" ip -4 addr show "+vm+subnet_name+"B | grep -oP \'(?<=inet\s)\d+(\.\d+){3}\'", shell=True).strip()
+print(ip_get)
 
 lb_base = False
 base_ns_subnet = ''

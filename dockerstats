@@ -1,4 +1,4 @@
 CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
-5484f148d78b        mmanika             0.00%               3.723MiB / 23.54GiB   0.02%               9.96kB / 7.77kB     1.16MB / 4.1kB      2
-6e1ab79433c5        C1_2                0.10%               6.445MiB / 23.54GiB   0.03%               1.57kB / 0B         569kB / 12.3kB      14
-65ed0c1bb226        C1_1                398.52%             16.5MiB / 23.54GiB    0.07%               1.51MB / 35.6kB     46.9MB / 8.73MB     8
+66fee22e2d04        C1_2                0.00%               4.168MiB / 23.54GiB   0.02%               978B / 0B           0B / 4.1kB          3
+e48f8873abb6        C1_1                397.26%             14.29MiB / 23.54GiB   0.06%               1.46MB / 50.3kB     0B / 7.56MB         8
+5484f148d78b        mmanika             0.00%               3.723MiB / 23.54GiB   0.02%               10.1kB / 7.77kB     1.16MB / 4.1kB      2
