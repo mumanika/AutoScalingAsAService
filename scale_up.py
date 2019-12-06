@@ -54,18 +54,7 @@ grp_id= grp_name[1]
 
 vm = 'C'+grp_id+'_'+str(total_ct)
 
-subnet_name = ''
-rand_id = random.choice(grp_subnets)
-
-for sub in schema['subnets']:
-    flag =1
-    for h in sub:
-        if h['subnet_id'] ==  rand_id:
-            subnet_name = h['subnet_name']
-            flag =0
-            break
-    if flag == 0:
-        break
+subnet_name = sys.argv[4];
 
 print(subnet_name)
 
@@ -99,18 +88,6 @@ for sub in schema['subnets']:
             idx = len(h['container_lb_list'])
 
 base_ns_subnet = get_ip(base_ns_subnet,2)
-
-if lb_base == True:
-    n_packet = 0
-    for sub in schema['subnets']:
-        for h in sub:
-            if h['subnet_id'] in grp_subnets:
-                if len(h['container_list']) > 0:
-                        n_packet +=1
-
-    for hyp_host in mgmt_schema['hosts']:
-        subprocess.call(shlex.split('ssh  '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp_name))
-
 
 subprocess.call(shlex.split('sudo /home/ece792/AutoScalingAsAService/loadBalanceAdd.sh '+str(idx)+' '+base_ns_subnet+' 1025 '+ip_get+' 22 '+ subnet_name))
 
