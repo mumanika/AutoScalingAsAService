@@ -217,7 +217,7 @@ def main():
                         subprocess.call(shlex.split(' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp[0]['name']))
 
                     else:
-                        subprocess.call(shlex.split('ssh  '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp_name))
+                        subprocess.call(shlex.split('ssh  '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp[0]['name']))
 
 
 
