@@ -75,7 +75,7 @@ time.sleep(4)
 pid = subprocess.check_output("sudo docker inspect -f '{{.State.Pid}}' "+vm, shell=True).strip()
 subprocess.call(shlex.split('sudo '+path+'addGuestBridgeInterface.sh '+subnet_name+ ' '+vm))
 subprocess.call(shlex.split('sudo '+path+'addContainerInterface.sh '+subnet_name+' '+vm+' '+pid))
-#os.system("sudo docker exec --privileged "+vm+" /etc/init.d/ssh start")
+os.system("sudo docker exec --privileged "+vm+" service ssh start")
 
 ip_get = subprocess.check_output("sudo docker container exec --privileged "+vm+" ip -4 addr show "+vm+subnet_name+"B | grep -oP \'(?<=inet\s)\d+(\.\d+){3}\'", shell=True).strip()
 print(ip_get)
@@ -109,12 +109,12 @@ if lb_base == True:
                         n_packet +=1
 
     for hyp_host in mgmt_schema['hosts']:
-        subprocess.call(shlex.split('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp_name))
+        subprocess.call(shlex.split('ssh  '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh '+str(n_packet+1)+' '+base_ns_subnet+' 1025  '+schema['ns_name']+ ' ' +grp_name))
 
 
 subprocess.call(shlex.split('sudo /home/ece792/AutoScalingAsAService/loadBalanceAdd.sh '+str(idx)+' '+base_ns_subnet+' 1025 '+ip_get+' 22 '+ subnet_name))
 
-with open(file_name,'w') as tt_f:
+with open(path+file_name,'w') as tt_f:
     json.dump(schema,tt_f,indent=4)
 
 

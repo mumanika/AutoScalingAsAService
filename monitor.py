@@ -12,9 +12,18 @@ with open(file_name,'r') as f:
 with open('mgmt.json','r') as mgmt_f:
     mgmt_schema = json.load(mgmt_f)
 
+
 def diff(dtime):
     timer = dtime.split(":")[2]
     return float(timer)
+
+def update_json(schema):
+    with open(file_name,'w') as w_f:
+        json.dump(schema,w_f,indent=4)
+
+    for host in mgmt_schema['hosts']:
+         subprocess.call(shlex.split('sudo scp '+file_name+' ' +host['user']+'@'+host['mgmt_ip']+':/home/ece792/AutoScalingAsAService/'))
+
 
 
 
@@ -79,10 +88,9 @@ def dynamic_reactive(grp,schema):
         for grp_meta in schema['scaling_metadata']:
             if grp_meta['name'] == grp_name:
                  grp_meta['flag']= 0
-                 grp_meta['timer'] = datetime.now()
+                 grp_meta['timer'] = str(datetime.now())
         #update json
-
-
+        update_json(schema)
         return 1
 
     elif flag ==0 and scale_up_ct >0:    #check for cooldown period else wise
@@ -90,8 +98,9 @@ def dynamic_reactive(grp,schema):
         if diff(str(p_timer - timer)) > schema['cooldown']:
             for grp_meta in schema['scaling_metadata']:
                if grp_meta['name'] == grp_name:
-                    grp_meta['timer'] = p_timer
+                    grp_meta['timer'] = str(p_timer)
             #update json tbd
+            update_json(schema)
             return 1
 
         else:
@@ -147,7 +156,7 @@ def main():
                     hyp_user = hyp_host['user']
 
             print(hyp_ip)
-            subprocess.call(shlex.split('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']))
+            subprocess.call(shlex.split('ssh '+hyp_user+'@'+hyp_ip+' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']))
         
         elif action == 0:
             continue
