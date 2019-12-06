@@ -3,6 +3,7 @@ import sys
 import subprocess
 import shlex
 import time
+import random
 from datetime import datetime
 
 file_name = sys.argv[1]
@@ -183,12 +184,12 @@ def main():
             for sub in schema['subnets']:
                 flag =1
                 for h in sub:
-                     if h['subnet_id'] ==  rand_id:
+                    if h['subnet_id'] ==  rand_id:
                         subnet_name = h['subnet_name']
                         flag =0
                         break
-                 if flag == 0:
-                     break
+                if flag == 0:
+                    break
 
             print(subnet_name)
 
