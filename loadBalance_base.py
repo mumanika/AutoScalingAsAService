@@ -42,8 +42,7 @@ for grp in schema['scaling_groups']:
                     subprocess.call(shlex.split('./loadBalanceBaseAdd.sh' +' '+str(idx1+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
                     idx1 +=1;
                 else:
-                     subprocess.call(shlex.split('/home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh' +' '+str(idx2+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
-
+                    subprocess.call(shlex.split('/home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh' +' '+str(idx2+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
                     idx2 +=1
             temp +=1
 
