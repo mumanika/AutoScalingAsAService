@@ -14,8 +14,7 @@ with open('mgmt.json','r') as mgmt_f:
 
 
 def diff(dtime):
-    timer = dtime.split(":")[2]
-    return float(timer)
+    return int(dtime.total_seconds())
 
 def update_json(schema):
     with open(file_name,'w') as w_f:
@@ -80,7 +79,7 @@ def dynamic_reactive(grp,schema):
     for grp_meta in schema['scaling_metadata']:
         if grp_meta['name'] == grp_name:
             flag = grp_meta['flag']
-            timer = grp_meta['timer']
+            timer = datetime.datetime.strptime(grp_meta['timer'], '%Y-%m-%d %H:%M:%S.%f');
             break
 
 
@@ -94,8 +93,8 @@ def dynamic_reactive(grp,schema):
         return 1
 
     elif flag ==0 and scale_up_ct >0:    #check for cooldown period else wise
-        p_timer = datetime.now()
-        if diff(str(p_timer - timer)) > schema['cooldown']:
+        p_timer = datetime.now();
+        if int(diff(p_timer - timer)) > int(60*schema['cooldown']):
             for grp_meta in schema['scaling_metadata']:
                if grp_meta['name'] == grp_name:
                     grp_meta['timer'] = str(p_timer)
