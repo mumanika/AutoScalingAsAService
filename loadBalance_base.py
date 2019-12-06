@@ -27,7 +27,8 @@ def get_count(mem,h_name,schema):
 
 
 for grp in schema['scaling_groups']:
-    idx =0
+    idx1 =0
+    idx2 =0;
     for host in grp:
         lo=''
         temp =0
@@ -38,10 +39,11 @@ for grp in schema['scaling_groups']:
             num = get_count(mem,h_name,schema)
             if num > 0:
                 if host_id == '1':
-                    subprocess.call(shlex.split('./loadBalanceBaseAdd.sh' +' '+str(idx+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
+                    subprocess.call(shlex.split('./loadBalanceBaseAdd.sh' +' '+str(idx1+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
+                    idx1 +=1;
                 else:
-                     subprocess.call(shlex.split('/home/ece792/Project2/Finaltest/loadBalanceBaseAdd.sh' +' '+str(idx+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
+                     subprocess.call(shlex.split('/home/ece792/AutoScalingAsAService/loadBalanceBaseAdd.sh' +' '+str(idx2+1)+' '+get_ip(host['base_ns_subnet_list'][temp],2)+' '+ '1025'+' '+schema['ns_name']+ ' '+host['name']))
 
-                idx +=1
+                    idx2 +=1
             temp +=1
 

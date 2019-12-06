@@ -99,7 +99,7 @@ def dynamic_reactive(grp,schema):
 
     #if no scale up then need to check scale down
     
-    for m in range(scale_down_ct,min_cont-1,-1):
+    for m in range(min(scale_down_ct,len(cont_dict)-min_cont),0,-1):
         if total_cpu < (len(cont_dict) - m )* max_cpu:
 
             return m+2

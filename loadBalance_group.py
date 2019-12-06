@@ -35,7 +35,7 @@ for grp in schema['scaling_groups']:
                 if host_id == '1':
                     subprocess.call(shlex.split('./loadBalanceAddGroup.sh' +' '+host['name']+' '+ public_ip+' '+str(host['port'])+' '+schema['ns_name']))
                 else:
-                     subprocess.call(shlex.split('/home/ece792/Project2/Finaltest/loadBalanceAddGroup.sh' +' '+host['name']+' '+ public_ip+' '+str(host['port'])+' '+schema['ns_name']))
+                     subprocess.call(shlex.split('/home/ece792/AutoScalingAsAService/loadBalanceAddGroup.sh' +' '+host['name']+' '+ public_ip+' '+str(host['port'])+' '+schema['ns_name']))
 
 
 
