@@ -17,9 +17,9 @@
 		{
 			"members": [1],
 			"policy": "dynamic",
-			"max_cpu":30,
-			"max_memory":10,
-			"min_cpu":10,
+			"max_cpu":25,
+			"max_memory":80,
+			"min_cpu":5,
 			"min_container":2
 		},
 		{

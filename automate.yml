@@ -32,7 +32,7 @@
       when: inventory_hostname == 'localhost'
 
     - name: Create subnets in site2
-      command: "python {{path_file}}createSubnets.py {{path_file}}{{ file_name }} 1"
+      command: "python /home/ece792/AutoScalingAsAService/createSubnets.py /home/ece792/AutoScalingAsAService/{{ file_name }} 1"
       become: true
       when: inventory_hostname == '172.16.12.12'
 
@@ -45,7 +45,7 @@
       #when: inventory_hostname == 'localhost'
 
     - name : copy file to site2
-      command: "sudo scp {{ json_file.json }}  ece792@172.16.12.12:{{path_file}}"
+      command: "sudo scp {{ json_file.json }}  ece792@172.16.12.12:/home/ece792/AutoScalingAsAService"
       when: inventory_hostname == 'localhost'
 
     - name: Add new group chain in site1

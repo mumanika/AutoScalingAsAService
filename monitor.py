@@ -53,6 +53,7 @@ def dynamic_reactive(grp,schema):
     total_cpu = 0
 
     for key,value in cont_dict.items():
+        print(value)
         cpu = float(value[0])
         mem = float(value[1])
         total_cpu += cpu
@@ -114,6 +115,7 @@ def dynamic_reactive(grp,schema):
 
 
 def get_action(grp,schema):
+    action=0
     policy_type = grp[0]['policy']['type']
     if policy_type == 'dynamic':
         action = dynamic_reactive(grp,schema)
@@ -130,20 +132,22 @@ def main():
     for grp in schema['scaling_groups']:
         #self_heal(grp,schema)
         action = get_action(grp,schema)
-
+        
+        print(action)
         if action == 1:  #scale up
             min_hyp_use = 100
             hyp_ip=''
             hyp_user=''
             for hyp_host in mgmt_schema['hosts']:
 
-                output = subprocess.check_output('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo /home/ece792/hypervisorStats.sh ' ,shell=True).strip()
+                output = subprocess.check_output('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' /home/ece792/AutoScalingAsAService/hypervisorStats.sh ' ,shell=True).strip()
                 if float(output) <  min_hyp_use:
                     min_hyp_use = float(output)
                     hyp_ip = hyp_host['mgmt_ip']
                     hyp_user = hyp_host['user']
 
-            subprocess.call(shlex.split('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' sudo /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']))
+            print(hyp_ip)
+            subprocess.call(shlex.split('ssh '+hyp_host['user']+'@'+hyp_host['mgmt_ip']+' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']))
         
         elif action == 0:
             continue
@@ -153,6 +157,8 @@ def main():
 
 
 
+if __name__=='__main__':
+    main()
 
             
 

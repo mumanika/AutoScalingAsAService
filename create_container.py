@@ -21,7 +21,7 @@ for k in schema['subnets']:
         if h['host'] == 'host1':
             for vms in h['container_list']:
                 vm = vms['name']
-                subprocess.call(shlex.split('sudo docker run -itd --name '+vm+' ece792 \'/bin/sh\''))
+                subprocess.call(shlex.split('sudo docker run -itd --name '+vm+' ece792 \'/bin/bash\''))
                 time.sleep(4)
                 pid = subprocess.check_output("sudo docker inspect -f '{{.State.Pid}}' "+vm, shell=True).strip()
                 subprocess.call(shlex.split('sudo ./addGuestBridgeInterface.sh '+h['subnet_name']+ ' '+vm))

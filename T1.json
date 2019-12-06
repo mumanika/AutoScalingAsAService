@@ -6,12 +6,12 @@
                 "subnet_id": 1, 
                 "subnet_address": "5.5.5.0", 
                 "container_lb_list": [
-                    "5.5.5.148"
+                    "5.5.5.114"
                 ], 
                 "prefix": 24, 
                 "container_list": [
                     {
-                        "ip": "5.5.5.148", 
+                        "ip": "5.5.5.114", 
                         "name": "C1_1"
                     }
                 ], 
@@ -41,12 +41,12 @@
                 "subnet_id": 2, 
                 "subnet_address": "10.10.10.0", 
                 "container_lb_list": [
-                    "10.10.10.173"
+                    "10.10.10.29"
                 ], 
                 "prefix": 24, 
                 "container_list": [
                     {
-                        "ip": "10.10.10.173", 
+                        "ip": "10.10.10.29", 
                         "name": "C1_2"
                     }
                 ], 
@@ -74,7 +74,20 @@
     "lo_h1": "70.70.70.70", 
     "lo_h2": "71.71.71.71", 
     "subnet_num": 2, 
+    "cooldown": 10, 
     "total_ct": 2, 
+    "scaling_metadata": [
+        {
+            "flag": 1, 
+            "name": "G1", 
+            "timer": "2019-12-06 08:59:24.213516"
+        }, 
+        {
+            "flag": 1, 
+            "name": "G2", 
+            "timer": "2019-12-06 08:59:24.213535"
+        }
+    ], 
     "ns_name": "NS1", 
     "scaling_groups": [
         [
@@ -91,13 +104,13 @@
                     1
                 ], 
                 "policy": {
-                    "min_cpu": 10, 
-                    "min_mem": 5, 
-                    "max_cpu": 30, 
+                    "min_cpu": 5, 
+                    "max_cpu": 25, 
+                    "min_cont": 2, 
                     "type": "dynamic", 
-                    "max_mem": 10
+                    "max_mem": 80
                 }, 
-                "port": 5112
+                "port": 5114
             }, 
             {
                 "name": "G1", 
@@ -112,13 +125,13 @@
                     1
                 ], 
                 "policy": {
-                    "min_cpu": 10, 
-                    "min_mem": 5, 
-                    "max_cpu": 30, 
+                    "min_cpu": 5, 
+                    "max_cpu": 25, 
+                    "min_cont": 2, 
                     "type": "dynamic", 
-                    "max_mem": 10
+                    "max_mem": 80
                 }, 
-                "port": 5112
+                "port": 5114
             }
         ], 
         [
@@ -136,9 +149,10 @@
                 ], 
                 "policy": {
                     "type": "static", 
+                    "number": 2, 
                     "time": "wednesday"
                 }, 
-                "port": 5113
+                "port": 5115
             }, 
             {
                 "name": "G2", 
@@ -154,9 +168,10 @@
                 ], 
                 "policy": {
                     "type": "static", 
+                    "number": 2, 
                     "time": "wednesday"
                 }, 
-                "port": 5113
+                "port": 5115
             }
         ]
     ], 

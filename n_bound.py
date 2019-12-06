@@ -225,9 +225,11 @@ for k in input_schema['scaling_groups']:
     dic ={}
     dic['name'] = 'G'+str(idx+1)
     dic['flag'] = 1
-    dic['timer'] = datetime.now()
+    dic['timer'] = str(datetime.now())
     tenant['scaling_metadata'].append(dic)
+    idx +=1
 
+tenant['cooldown'] = 10
 
 file_name = tenant_name+".json"
 with open(file_name,'w') as outfile:
@@ -266,8 +268,8 @@ arg_file = file_name.split('.')[0]+"_vars.json"
 with open(arg_file,'w') as ofile:
     json.dump(arg_vars,ofile,indent=4)
 
-subprocess.call(shlex.split('sudo scp'+' ' + arg_file+' '+' ece792@172.16.12.12:/home/ece792/Project2/Finaltest'))
-subprocess.call(shlex.split('sudo scp'+' ' +file_name+' '+' ece792@172.16.12.12:/home/ece792/Project2/Finaltest'))
+subprocess.call(shlex.split('sudo scp'+' ' + arg_file+' '+' ece792@172.16.12.12:/home/ece792/AutoScalingAsAService'))
+subprocess.call(shlex.split('sudo scp'+' ' +file_name+' '+' ece792@172.16.12.12:/home/ece792/AutoScalingAsAService'))
 #subprocess.call(shlex.split('sudo scp'+' ' +'addRouteToSubnet.sh'+' '+' ece792@172.16.12.12:/home/ece792/Project2'))
 
 #call automation
