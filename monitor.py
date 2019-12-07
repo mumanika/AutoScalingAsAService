@@ -172,8 +172,8 @@ def delete(ip,h_name,sub_name,schema,grp_name,base_ns):
                         del h['container_list'][i]
 
                 if len(h['container_lb_list']) == 0:
-                    n_pack = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk -v var=\"to:'+base_ns+':1025\" \'{for (I=1;I<=NF;I++) if ($I == var) {printf \"%s\n\", $(1) };}\'',shell=True).strip()
-                    n_rules = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk \'END{printf \"%s\n\", $(1) }\'',shell=True).strip()
+                    n_pack = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk -v var=\"to:'+base_ns+':1025\" \'{for (I=1;I<=NF;I++) if ($I == var) {printf \"\%s\", $(1) };}\'',shell=True).strip()
+                    n_rules = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk \'END{printf \"\%s\", $(1) }\'',shell=True).strip()
 
                     subprocess.call(shlex.split(' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
                     subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
