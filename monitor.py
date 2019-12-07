@@ -146,10 +146,12 @@ def delete(ip,h_name,sub_name,schema,grp_name,base_ns):
     lb = False
 
     total_len = 0
+    mem =[]
 
     for grp in schema['scaling_groups']:
-        if grp['name'] == grp_name:
-            mem = grp['members']
+        for h in grp:
+            if h['name'] == grp_name:
+                mem = grp['members']
 
     for sub in schema['subnets']:
         for h in sub:
