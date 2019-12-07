@@ -9,7 +9,7 @@ then
 fi
 
 br=$(echo ${1}'B')
-ip netns exec $1 ip link set dev ${br} down
+ip link set dev ${br} down
 ip netns exec $1 ip link set dev NS${br} down
 ip link set dev ${br}NS down
 
@@ -23,7 +23,7 @@ done
 
 
 brctl delbr ${br}
-ip netns exec $1 ip link del NS${br}
+ip link del ${br}NS
 ip netns exec $1 ip link set dev ${1}Bse down
 ip netns exec $1 ip link del dev ${1}Bse
 lookStr="--interface=NS${br}"
