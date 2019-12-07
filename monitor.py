@@ -63,7 +63,6 @@ def dynamic_reactive(grp,schema):
                         output = subprocess.check_output('ssh ece792@172.16.12.12 sudo python /home/ece792/AutoScalingAsAService/container_stats_1.py '+cont_list,shell=True)
 
                     output = output.strip().split(' ')
-                    #print(output)
                     cpu_stat = output[0]
                     mem_stat = output[1]
                     cont_dict[cont_list] = (cpu_stat,mem_stat)
@@ -84,7 +83,8 @@ def dynamic_reactive(grp,schema):
             scale_down_ct +=1
         else:
             optimal_ct +=1
-
+    
+    print(scale_down_ct)
     if optimal_ct == len(cont_dict):  #no need of scale up or scale down
         return 0
 
@@ -119,11 +119,21 @@ def dynamic_reactive(grp,schema):
             return 0
 
     #if no scale up then need to check scale down
-    
-    for m in range(min(scale_down_ct,len(cont_dict)-min_cont),0,-1):
-        if total_cpu < (len(cont_dict) - m )* max_cpu:
+    if flag ==0 and scale_down_ct >0:
+        print("Entered")
+        p_timer = datetime.now();
+        if int(diff(p_timer - timer)) > int(60*schema['cooldown']):
+            for grp_meta in schema['scaling_metadata']:
+               if grp_meta['name'] == grp_name:
+                    grp_meta['timer'] = str(p_timer)
+            #update json tbd
+            update_json(schema)
 
-            return m+2
+            for m in range(min(scale_down_ct,len(cont_dict)-min_cont),0,-1):
+                if total_cpu < (len(cont_dict) - m )* max_cpu:
+                    return m+2
+        else:
+            return 0
 
 
     return 0
@@ -132,7 +142,43 @@ def dynamic_reactive(grp,schema):
 
 
 
-        
+def delete(ip,h_name,sub_name,schema,grp_name,base_ns):
+    lb = False
+
+    total_len = 0
+
+    for grp in schema['scaling_groups']:
+        if grp['name'] == grp_name:
+            mem = grp['members']
+
+    for sub in schema['subnets']:
+        for h in sub:
+            if h['subnet_id'] in mem:
+                if h['container_list'] > 0:
+                    total_len +=1
+
+    
+    for sub in schema['subnets']:
+        for h in sub:
+            if h['host'] == h_name and h['subnet_name'] == sub_name:
+                h['container_lb_list'].remove(ip)
+
+                for i in range(len(h['container_list'])):
+                    if h['container_list'][i]['ip'] == ip:
+                        del h['container_list'][i]
+
+                if len(h['container_lb_list']) == 0:
+                    n_pack = subprocess.check_output('ip netns exec '+schema['ns_name']+ 'iptables -t nat -L '+grp_name+' --line-numbers | awk -v var=\"to:'+base_ns+':1025\" {for (I=1;I<=NF;I++) if ($I == var) {printf "%s\n", $(1) };}',shell=True).strip()
+
+                    subprocess.call(shlex.split(' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(n_pack)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
+                    subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(n_pack)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
+
+                update_json(schema)
+
+                return
+
+
+                    
 
 
 def get_action(grp,schema):
@@ -226,11 +272,51 @@ def main():
             else:
                 subprocess.call(shlex.split('ssh '+hyp_user+'@'+hyp_ip+' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']+' ' +subnet_name))
         
+        ####### finished scale up #########
+        
         elif action == 0:
             continue
 
         else:
-            action = action -2 # need to see scale down
+            scale_down_ct = action -2 # need to see scale down
+
+            scale_down_li = []
+            total_li = []
+
+            for sub in schema['subnets']:
+                for h in sub:
+                    if h['subnet_id'] in grp_subnets:
+                        for num,x in enumerate(h['container_list']):
+                            total_li.append((x['ip'],x['name'],h['host'],h['subnet_name'],h['base_ns_subnet'],num+1))
+
+            scale_down_li = total_li[(-1*scale_down_ct):]
+
+            for tup in scale_down_li:
+                ip = tup[0]
+                cont_name = tup[1]
+                host_tbd = tup[2]
+                subnet_name = tup[3]
+                base_ns_subnet = tup[4]
+                n_pack = tup[5]
+                base_ns_subnet = get_ip(base_ns_subnet,2)
+                
+             
+
+
+                if host_tbd == 'host1':
+                    subprocess.call(shlex.split(' python /home/ece792/AutoScalingAsAService/scale_down.py '+base_ns_subnet+' '+cont_name+' '+subnet_name+' '+str(n_pack)))
+                else:
+                    subprocess.call(shlex.split('ssh ece792@172.16.12.12 python  /home/ece792/AutoScalingAsAService/scale_down.py '+base_ns_subnet+' '+cont_name+' '+subnet_name+' '+str(n_pack)))
+
+                
+                delete(ip,host_tbd,subnet_name,schema,grp[0]['name'],base_ns_subnet)
+
+
+
+                        
+
+
+
 
 
 
