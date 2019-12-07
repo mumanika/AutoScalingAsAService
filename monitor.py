@@ -20,12 +20,14 @@ def diff(dtime):
 def update_json(schema):
     with open(file_name,'w') as w_f:
         json.dump(schema,w_f,indent=4)
+    
+    subprocess.call(shlex.split('sudo scp '+file_name+' ' +'ece792'+'@'+'172.16.12.12:/home/ece792/AutoScalingAsAService/'))
 
-    for host in mgmt_schema['hosts']:
-        if host['mgmt_ip'] == '172.16.12.13':
-            continue
-        else:
-            subprocess.call(shlex.split('sudo scp '+file_name+' ' +host['user']+'@'+host['mgmt_ip']+':/home/ece792/AutoScalingAsAService/'))
+    #for host in mgmt_schema['hosts']:
+    #    if host['mgmt_ip'] == '172.16.12.13':
+    #        continue
+    #    else:
+    #        subprocess.call(shlex.split('sudo scp '+file_name+' ' +host['user']+'@'+host['mgmt_ip']+':/home/ece792/AutoScalingAsAService/'))
 
 def get_ip(address,last_idx):
     sub = address.split('.')
@@ -35,6 +37,31 @@ def get_ip(address,last_idx):
             ip = ip + p+'.'
     ip = ip+str(last_idx)
     return ip
+
+
+def static_proactive(grp,schema):
+    mem = set(grp[0]['members'])
+    grp_name = grp[0]['name']
+    scale_by = grp[0]['policy']['number']
+    weekday = grp[0]['policy']['weekday']
+    subnet_name = 'T1S2'
+    for grp_meta in schema['scaling_metadata']:
+        if grp_meta['name'] == grp_name:
+            flag = grp_meta['flag']
+            break
+
+    if flag == 1:
+        if datetime.today().weekday() == weekday:
+            for j in range(0,scale_by):
+                subprocess.call(shlex.split(' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' 172.16.12.13 '+grp_name+' '+subnet_name))
+
+        grp_meta['flag'] =0
+
+        update_json(schema)
+    return 0
+
+
+
 
 
 
@@ -148,9 +175,6 @@ def delete(ip,h_name,sub_name,grp_name,base_ns):
 
     lb = False
 
-
-
-
     
     for sub in n_schema['subnets']:
         for h in sub:
@@ -178,6 +202,7 @@ def delete(ip,h_name,sub_name,grp_name,base_ns):
 
                 return
 
+
 def update_log_file(file_name,hyp_ip,subnet_name):
     with open(file_name,'r') as log_f:
         log_schema = json.load(log_f)
@@ -201,6 +226,9 @@ def get_action(grp,schema):
     policy_type = grp[0]['policy']['type']
     if policy_type == 'dynamic':
         action = dynamic_reactive(grp,schema)
+
+    elif policy_type == 'static':
+        action = static_proactive(grp,schema)
 
     return action
 

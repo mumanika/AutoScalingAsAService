@@ -6,16 +6,16 @@
                 "subnet_id": 1, 
                 "subnet_address": "5.5.5.0", 
                 "container_lb_list": [
-                    "5.5.5.114"
-                ], 
-                "prefix": 24, 
-                "container_list": [
-                    {
-                        "ip": "5.5.5.114", 
-                        "name": "C1_1"
-                    }
+                    "5.5.5.165"
                 ], 
                 "host": "host1", 
+                "container_list": [
+                    {
+                        "ip": "5.5.5.165", 
+                        "name": "C1_3"
+                    }
+                ], 
+                "prefix": 24, 
                 "subnet_name": "T1S1", 
                 "scale_up_flag": "0", 
                 "base_ns_subnet": "100.0.1.0", 
@@ -26,9 +26,9 @@
                 "subnet_id": 1, 
                 "subnet_address": "5.5.6.0", 
                 "container_lb_list": [], 
-                "prefix": 24, 
-                "container_list": [], 
                 "host": "host2", 
+                "container_list": [], 
+                "prefix": 24, 
                 "subnet_name": "T1S1", 
                 "scale_up_flag": "0", 
                 "base_ns_subnet": "100.0.2.0", 
@@ -41,16 +41,16 @@
                 "subnet_id": 2, 
                 "subnet_address": "10.10.10.0", 
                 "container_lb_list": [
-                    "10.10.10.29"
+                    "10.10.10.170"
                 ], 
-                "prefix": 24, 
+                "host": "host1", 
                 "container_list": [
                     {
-                        "ip": "10.10.10.29", 
+                        "ip": "10.10.10.170", 
                         "name": "C1_2"
                     }
                 ], 
-                "host": "host1", 
+                "prefix": 24, 
                 "subnet_name": "T1S2", 
                 "scale_up_flag": "0", 
                 "base_ns_subnet": "100.0.3.0", 
@@ -61,9 +61,9 @@
                 "subnet_id": 2, 
                 "subnet_address": "10.10.11.0", 
                 "container_lb_list": [], 
-                "prefix": 24, 
-                "container_list": [], 
                 "host": "host2", 
+                "container_list": [], 
+                "prefix": 24, 
                 "subnet_name": "T1S2", 
                 "scale_up_flag": "0", 
                 "base_ns_subnet": "100.0.4.0", 
@@ -74,21 +74,22 @@
     "lo_h1": "70.70.70.70", 
     "lo_h2": "71.71.71.71", 
     "subnet_num": 2, 
-    "cooldown": 10, 
-    "total_ct": 2, 
+    "cooldown": 2, 
+    "total_ct": 4, 
     "scaling_metadata": [
         {
-            "flag": 1, 
+            "flag": 0, 
             "name": "G1", 
-            "timer": "2019-12-06 08:59:24.213516"
+            "timer": "2019-12-07 11:06:21.094663"
         }, 
         {
-            "flag": 1, 
+            "flag": 0, 
             "name": "G2", 
-            "timer": "2019-12-06 08:59:24.213535"
+            "timer": "2019-12-07 11:00:21.320157"
         }
     ], 
     "ns_name": "NS1", 
+    "log_file": "log_T1.txt", 
     "scaling_groups": [
         [
             {
@@ -106,11 +107,11 @@
                 "policy": {
                     "min_cpu": 5, 
                     "max_cpu": 25, 
-                    "min_cont": 2, 
+                    "min_cont": 1, 
                     "type": "dynamic", 
                     "max_mem": 80
                 }, 
-                "port": 5114
+                "port": 5112
             }, 
             {
                 "name": "G1", 
@@ -127,11 +128,11 @@
                 "policy": {
                     "min_cpu": 5, 
                     "max_cpu": 25, 
-                    "min_cont": 2, 
+                    "min_cont": 1, 
                     "type": "dynamic", 
                     "max_mem": 80
                 }, 
-                "port": 5114
+                "port": 5112
             }
         ], 
         [
@@ -149,10 +150,10 @@
                 ], 
                 "policy": {
                     "type": "static", 
-                    "number": 2, 
-                    "time": "wednesday"
+                    "weekday": 5, 
+                    "number": 2
                 }, 
-                "port": 5115
+                "port": 5113
             }, 
             {
                 "name": "G2", 
@@ -168,10 +169,10 @@
                 ], 
                 "policy": {
                     "type": "static", 
-                    "number": 2, 
-                    "time": "wednesday"
+                    "weekday": 5, 
+                    "number": 2
                 }, 
-                "port": 5115
+                "port": 5113
             }
         ]
     ], 

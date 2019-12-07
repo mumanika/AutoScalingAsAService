@@ -189,7 +189,7 @@ for k in input_schema['scaling_groups']:
     else:
         policy ={}
         policy['type']='static'
-        policy['time'] = k['time']
+        policy['weekday'] = k['weekday']
         policy['number']=k['number']
 
     hosts=[]

@@ -95,8 +95,9 @@ with open(path+file_name,'w') as tt_f:
     json.dump(schema,tt_f,indent=4)
 
 
+print(host_name)
 for host in mgmt_schema['hosts']:
-    if host['user'] != host_name:
+    if host['host'] != host_name:
         subprocess.call(shlex.split('sudo scp '+path+file_name+' ' +host['user']+'@'+host['mgmt_ip']+':/home/ece792/AutoScalingAsAService/'))
 
 
