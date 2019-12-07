@@ -120,7 +120,7 @@ def dynamic_reactive(grp,schema):
 
     #if no scale up then need to check scale down
     if flag ==0 and scale_down_ct >0:
-        print("Entered")
+        #print("Entered")
         p_timer = datetime.now();
         if int(diff(p_timer - timer)) > int(60*schema['cooldown']):
             for grp_meta in schema['scaling_metadata']:
@@ -142,46 +142,56 @@ def dynamic_reactive(grp,schema):
 
 
 
-def delete(ip,h_name,sub_name,schema,grp_name,base_ns):
+def delete(ip,h_name,sub_name,grp_name,base_ns):
+    with open(file_name,'r') as ff:
+        n_schema = json.load(ff)
+
     lb = False
 
-    total_len = 0
-    mem =[]
-
-    for grp in schema['scaling_groups']:
-        for h in grp:
-            if h['name'] == grp_name:
-                mem = h['members']
-                break
 
 
-    for sub in schema['subnets']:
-        for h in sub:
-            if h['subnet_id'] in mem:
-                if h['container_list'] > 0:
-                    total_len +=1
 
     
-    for sub in schema['subnets']:
+    for sub in n_schema['subnets']:
         for h in sub:
             if h['host'] == h_name and h['subnet_name'] == sub_name:
                 h['container_lb_list'].remove(ip)
 
-                for i in range(len(h['container_list'])):
+                for i in range(0,len(h['container_list'])):
+                    #print(i)
+                    #print(h['container_list'][i])
                     if h['container_list'][i]['ip'] == ip:
                         del h['container_list'][i]
+                        break
 
                 if len(h['container_lb_list']) == 0:
-                    n_pack = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk -v var=\"to:'+base_ns+':1025\" \'{for (I=1;I<=NF;I++) if ($I == var) {printf \"\%s\", $(1) };}\'',shell=True).strip()
-                    n_rules = subprocess.check_output('ip netns exec '+schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk \'END{printf \"\%s\", $(1) }\'',shell=True).strip()
+                    n_pack = subprocess.check_output('ip netns exec '+n_schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk -v var=\"to:'+base_ns+':1025\" \'{for (I=1;I<=NF;I++) if ($I == var) {printf \"\%s\", $(1) };}\'',shell=True).strip()
+                    n_rules = subprocess.check_output('ip netns exec '+n_schema['ns_name']+ ' iptables -t nat -L '+grp_name+' --line-numbers | awk \'END{printf \"\%s\", $(1) }\'',shell=True).strip()
+                    #print(n_rules)
+                    #print(n_pack)
+                    #print(base_ns)
+                    #print(grp_name)
+                    subprocess.call(shlex.split('sudo /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+n_schema['ns_name']+' '+str(n_rules)+' ' +grp_name))
+                    subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+n_schema['ns_name']+' '+str(n_rules)+' ' +grp_name))
 
-                    subprocess.call(shlex.split(' sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
-                    subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo  /home/ece792/AutoScalingAsAService/loadBalanceBaseRep.sh '+str(int(n_rules)-int(n_pack)+1)+' '+base_ns+' 1025  '+total_len+' ' +grp[0]['name']))
-
-                update_json(schema)
+                update_json(n_schema)
 
                 return
 
+def update_log_file(file_name,hyp_ip,subnet_name):
+    with open(file_name,'r') as log_f:
+        log_schema = json.load(log_f)
+    h_name =''
+    if hyp_ip == '172.16.12.12':
+        h_name = 'host2'
+    else:
+        h_name = 'host1'
+
+    l_f = open(log_schema['log_file'],'a+')
+    for sub in log_schema['subnets']:
+        for h in sub:
+            if h['host'] == h_name and h['subnet_name'] == subnet_name:
+                l_f.write(str(datetime.now())+' : SCALE UP :New Container  with IP:'+h['container_lb_list'][len(h['container_lb_list'])-1] +' on '+ hyp_ip+ ' host\n')
 
                     
 
@@ -194,6 +204,130 @@ def get_action(grp,schema):
 
     return action
 
+def del_no_lb(ip,h_name,sub_name,grp_name,base_ns):
+    print("Entered del_no_lb")
+    with open(file_name,'r') as ff:
+        n_schema = json.load(ff)
+
+
+    for sub in n_schema['subnets']:
+        for h in sub:
+            if h['host'] == h_name and h['subnet_name'] == sub_name:
+                n_pack = h['container_lb_list'].index(ip)
+                if h_name == 'host1':
+                    subprocess.call(shlex.split('sudo /home/ece792/AutoScalingAsAService/loadBalanceRep.sh '+str(n_pack+1)+' '+base_ns+' 1025'+' '+sub_name+' '+str(len(h['container_lb_list']))))
+                else:
+                     subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo /home/ece792/AutoScalingAsAService/loadBalanceRep.sh '+str(n_pack+1)+' '+base_ns+' 1025'+' '+sub_name+' '+str(len(h['container_lb_list']))))
+
+                h['container_lb_list'].remove(ip)
+
+                for i in range(0,len(h['container_list'])):
+                    #print(i)
+                    #print(h['container_list'][i])
+                    if h['container_list'][i]['ip'] == ip:
+                        del h['container_list'][i]
+                        break
+
+
+                update_json(n_schema)
+
+                return
+
+
+
+def self_heal(grp,schema):   #def delete(ip,h_name,sub_name,grp_name,base_ns):
+    
+    with open(file_name,'r') as nnf:
+        nn_schema = json.load(nnf)
+
+    mem = set(grp[0]['members'])
+    
+    miss_list =[]
+    map_dict = {}
+
+    for sub in schema['subnets']:
+        for h in sub:
+            if h['subnet_id'] in mem:
+                cont_list =[]
+
+                for machine in h['container_list']:
+                    cont_list.append(str(machine['name']))
+                    map_dict[machine['name']] = machine['ip']
+                if(len(cont_list)):
+                    cont_str = str(cont_list[0])
+                    for j in range(1,len(cont_list)):
+                        cont_str = cont_str+ cont_list[j];
+                        if(j<(len(cont_list)-1)):
+                            cont_str = cont_str + ',';
+
+                    print("Cont_list ",cont_str);
+                
+                    if h['host'] == 'host1' and cont_str != str(''):
+                        output = subprocess.check_output('sudo python container_stats.py '+cont_str,shell=True).strip()
+                        output = output.split(",")
+                        for item in output:
+                            if item is not str(""):
+                                miss_list.append((map_dict[item],h['host'],h['subnet_name'],grp[0]['name'],get_ip(h['base_ns_subnet'],2)))
+
+                    elif cont_str != str(''):
+                        output = subprocess.check_output('ssh ece792@172.16.12.12 sudo python /home/ece792/AutoScalingAsAService/container_stats.py '+cont_str,shell=True).strip()
+                        output = output.split(",")
+                        for item in output:
+                            if item is not "":
+                                miss_list.append((map_dict[item],h['host'],h['subnet_name'],grp[0]['name'],get_ip(h['base_ns_subnet'],2)))
+   
+    print(" missing list is ",miss_list)
+    #delete lb rules for missing containers
+    for tup in miss_list:
+        del_no_lb(tup[0],tup[1],tup[2],tup[3],tup[4])
+
+    #spawn new container in respective subnets
+    with open(file_name,'r') as nnf:
+        nn_schema = json.load(nnf)
+
+    for tup in miss_list:
+        cont_id = nn_schema['total_ct']
+        cont_id +=1
+        nn_schema['total_ct'] = cont_id
+        sub_id = tup[2][1]
+        cont_name = 'C'+str(sub_id)+'_'+str(cont_id)
+
+        if tup[1] == 'host1':
+            subprocess.call(shlex.split('./createContainer.sh'+' '+cont_name+' '+tup[2]))
+        else:
+            subprocess.call(shlex.split('ssh ece792@172.16.12.12 sudo /home/ece792/AutoScalingAsAService/createContainer.sh '+cont_name+' '+tup[2]))
+        ip_get = subprocess.check_output("sudo docker container exec --privileged "+cont_name+" ip -4 addr show "+cont_name+tup[2]+"B | grep -oP \'(?<=inet\s)\d+(\.\d+){3}\'", shell=True).strip()
+
+        idx =0
+
+        for sub in nn_schema['subnets']:
+            for h in sub:
+                if h['host'] == tup[1] and h['subnet_name'] == tup[2]:
+
+                    h['container_list'].append({
+                        "ip":ip_get,
+                        "name":cont_name
+                     })
+                    h['container_lb_list'].append(ip_get)
+                    idx = len(h['container_lb_list'])
+                    break
+
+
+
+        subprocess.call(shlex.split('sudo /home/ece792/AutoScalingAsAService/loadBalanceAdd.sh '+str(idx)+' '+tup[4]+' 1025 '+ip_get+' 22 '+ tup[2]))
+        update_json(nn_schema)
+
+
+
+
+        
+
+
+
+
+
+
+
 def main():
     #after testCron is executed
     #expect to have tenant's vm and threshold details
@@ -202,8 +336,10 @@ def main():
     
 
     for grp in schema['scaling_groups']:
-        #self_heal(grp,schema)
-        action = get_action(grp,schema)
+        self_heal(grp,schema)
+        with open(file_name,'r') as after_f:
+            after_schema = json.load(after_f)
+        action = get_action(grp,after_schema)
         grp_subnets  = grp[0]['members']
         
         print(action)
@@ -232,7 +368,7 @@ def main():
             subnet_name = ''
             rand_id = random.choice(grp_subnets)
 
-            for sub in schema['subnets']:
+            for sub in after_schema['subnets']:
                 flag =1
                 for h in sub:
                     if h['subnet_id'] ==  rand_id:
@@ -247,7 +383,7 @@ def main():
             lb_base = False
             base_ns_subnet =''
 
-            for sub in schema['subnets']:
+            for sub in after_schema['subnets']:
                 for h in sub:
                     if h['host'] == host_name and h['subnet_name'] == subnet_name:
                         if len(h['container_lb_list']) ==0:
@@ -276,6 +412,8 @@ def main():
                 subprocess.call(shlex.split(' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']+' '+subnet_name))
             else:
                 subprocess.call(shlex.split('ssh '+hyp_user+'@'+hyp_ip+' python  /home/ece792/AutoScalingAsAService/scale_up.py '+file_name+' '+hyp_ip+' ' +grp[0]['name']+' ' +subnet_name))
+
+            update_log_file(file_name,hyp_ip,subnet_name)
         
         ####### finished scale up #########
         
@@ -284,11 +422,12 @@ def main():
 
         else:
             scale_down_ct = action -2 # need to see scale down
+            log_f = open(schema['log_file'],'a+')
 
             scale_down_li = []
             total_li = []
 
-            for sub in schema['subnets']:
+            for sub in after_schema['subnets']:
                 for h in sub:
                     if h['subnet_id'] in grp_subnets:
                         for num,x in enumerate(h['container_list']):
@@ -312,9 +451,15 @@ def main():
                     subprocess.call(shlex.split(' python /home/ece792/AutoScalingAsAService/scale_down.py '+base_ns_subnet+' '+cont_name+' '+subnet_name+' '+str(n_pack)))
                 else:
                     subprocess.call(shlex.split('ssh ece792@172.16.12.12 python  /home/ece792/AutoScalingAsAService/scale_down.py '+base_ns_subnet+' '+cont_name+' '+subnet_name+' '+str(n_pack)))
-
                 
-                delete(ip,host_tbd,subnet_name,schema,grp[0]['name'],base_ns_subnet)
+                hyp_ip_1 =''
+                if host_tbd == 'host1':
+                    hyp_ip_1 = '172.16.12.12'
+                else:
+                    hyp_ip_1 = '172.16.12.13'
+
+                log_f.write(str(datetime.now())+' : SCALE DOWN :Container  with IP:'+ip +' on '+ hyp_ip_1+ 'host\n')
+                delete(ip,host_tbd,subnet_name,grp[0]['name'],base_ns_subnet)
 
 
 

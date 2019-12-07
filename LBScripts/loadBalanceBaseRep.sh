@@ -5,7 +5,7 @@
 
 if [ $# -ne 4 ]
 then
-	#echo "Illegal number of parameters"
+	echo "Illegal number of parameters"
 	exit
 fi
 
@@ -30,4 +30,3 @@ done
 
 ip netns exec $2 iptables -t nat -D $4 $ruleToDel
 ip netns exec $2 iptables -t nat -Z $4
-

@@ -229,7 +229,10 @@ for k in input_schema['scaling_groups']:
     tenant['scaling_metadata'].append(dic)
     idx +=1
 
-tenant['cooldown'] = 10
+tenant['cooldown'] = 2
+tenant['log_file'] = "log_"+tenant_name+".txt"
+
+log_f = open("log_"+tenant_name+".txt","a+")
 
 file_name = tenant_name+".json"
 with open(file_name,'w') as outfile:
@@ -286,6 +289,7 @@ for sub in lb_schema['subnets']:
             lb_list = h['container_lb_list']
             for num,ip in enumerate(lb_list):
                 subprocess.call(shlex.split('sudo ./loadBalanceAdd.sh '+str(num+1)+' '+get_ip(h['base_ns_subnet'],2)+' 1025 '+ip+' 22 '+h['subnet_name']))
+
 
 
 #call cron job here for monitoring

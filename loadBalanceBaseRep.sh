@@ -5,7 +5,7 @@
 
 if [ $# -ne 4 ]
 then
-	#echo "Illegal number of parameters"
+	echo "Illegal number of parameters"
 	exit
 fi
 

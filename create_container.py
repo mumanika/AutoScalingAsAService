@@ -5,6 +5,7 @@ import sys
 import time
 import os
 import pexpect
+from datetime import datetime
 
 f_name = sys.argv[1]
 
@@ -15,6 +16,9 @@ schema_file = sc['json']
 
 with open(schema_file,'r') as g:
     schema = json.load(g)
+
+log_f = open(schema['log_file'],'a+')
+
 
 for k in schema['subnets']:
     for h in k:
@@ -38,6 +42,7 @@ for k in schema['subnets']:
                 ip_get = subprocess.check_output("sudo docker container exec --privileged "+vm+" ip -4 addr show "+vm+h['subnet_name']+"B | grep -oP \'(?<=inet\s)\d+(\.\d+){3}\'", shell=True).strip()
                 vms['ip'] = ip_get
                 h['container_lb_list'].append(ip_get)
+                log_f.write(str(datetime.now())+' : ONBOARD CONTAINER :New Container '+vm+' with IP:'+ip_get +' on 172.16.12.12 host\n')
 
 
 with open(schema_file,'w') as tt_f:
