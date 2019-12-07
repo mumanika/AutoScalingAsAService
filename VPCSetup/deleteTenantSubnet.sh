@@ -11,19 +11,19 @@ fi
 br=$(echo ${1}'B')
 ip netns exec $1 ip link set dev ${br} down
 ip netns exec $1 ip link set dev NS${br} down
-ip netns exec $1 ip link set dev ${br}NS down
+ip link set dev ${br}NS down
 
-a=($(ip netns exec $1 brctl show ${br} | awk 'NR==2, NR==$NR { print $NF }'))
+a=($(brctl show ${br} | awk 'NR==2, NR==$NR { print $NF }'))
 
 for i in "${a[@]}"
 do
-        ip netns exec $1 ip link set dev $i down
-        ip netns exec $1 ip link del dev $i
+        ip link set dev $i down
+        ip link del dev $i
 done
 
 
-ip netns exec $1 brctl delbr ${br}
-ip netns exec $1 ip link del ${br}NS
+brctl delbr ${br}
+ip netns exec $1 ip link del NS${br}
 ip netns exec $1 ip link set dev ${1}Bse down
 ip netns exec $1 ip link del dev ${1}Bse
 lookStr="--interface=NS${br}"
